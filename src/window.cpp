@@ -1,5 +1,5 @@
 #include "window.hpp"
-#include "fatal.hpp"
+#include "log.hpp"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -12,17 +12,21 @@ Window::Window() {
     glfwSetErrorCallback(glfw_error_callback);
 
     if (!glfwInit()) {
-        fatal("glfwInit() failed");
+        log_fatal_and_abort("glfwInit() failed");
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     glfw_window = glfwCreateWindow(1200, 800, "Reach", NULL, NULL);
     if (!glfw_window) {
-        fatal("glfwInit() failed");
+        log_fatal_and_abort("glfwCreateWindow() failed");
     }
 
     glfwMakeContextCurrent(glfw_window);
+    glfwSwapInterval(1);
 }
 
 Window::~Window() {

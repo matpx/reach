@@ -1,4 +1,6 @@
 #include "app.hpp"
+#include "renderer.hpp"
+#include "window.hpp"
 
 using namespace reach;
 
