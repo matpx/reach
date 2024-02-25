@@ -1,5 +1,16 @@
 project('reach', 'c', 'cpp', default_options: ['cpp_std=c++20'])
 
+# shader
+
+shdc = find_program('sokol-shdc', dirs: [join_paths(meson.current_source_dir(), 'tools/sokol-tools-bin/bin/win32')], required: true)
+
+shader = custom_target('targetname',
+    output : 'unlit.glsl.h',
+    input : 'src/shader/unlit.glsl',
+    command : [shdc, '--slang=glsl330', '--input=@INPUT@', '--output=@OUTPUT@'])
+
+# dependencies
+
 cmake = import('cmake')
 
 expected_lib = cmake.subproject('expected').dependency('expected')
@@ -14,12 +25,7 @@ src = [
     'src/renderer.cpp'
 ]
 
-shdc = find_program('sokol-shdc', dirs: [join_paths(meson.current_source_dir(), 'tools/sokol-tools-bin/bin/win32')], required: true)
-
-shader = custom_target('targetname',
-    output : 'unlit.glsl.h',
-    input : 'src/shader/unlit.glsl',
-    command : [shdc, '--slang=glsl330', '--input=@INPUT@', '--output=@OUTPUT@'])
+# main executable
 
 executable('reach',
     src + shader,
