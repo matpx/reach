@@ -13,4 +13,14 @@ src = [
     'src/renderer.cpp'
 ]
 
-executable('reach', src, include_directories: ['subprojects'], dependencies: [glfw_lib, entt_lib])
+shdc = find_program('sokol-shdc', dirs: [join_paths(meson.current_source_dir(), 'tools/sokol-tools-bin/bin/win32')], required: true)
+
+shader = custom_target('targetname',
+    output : 'unlit.glsl.h',
+    input : 'src/shader/unlit.glsl',
+    command : [shdc, '--slang=glsl330', '--input=@INPUT@', '--output=@OUTPUT@'])
+
+executable('reach',
+    src + shader,
+    include_directories: ['subprojects'],
+    dependencies: [glfw_lib, entt_lib])

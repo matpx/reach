@@ -1,13 +1,11 @@
 #pragma once
 
+#include "entt/entt.hpp"
 #include "nocopy.hpp"
 #include "src/nocopy.hpp"
-#include "entt/entt.hpp"
 
 namespace reach {
 
-class World : NoCopy, entt::registry {
-
-};
+class World : entt::registry, NoCopy {};
 
 } // namespace reach

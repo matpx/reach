@@ -36,7 +36,7 @@ Window::~Window() {
 
 bool Window::should_close() { return glfwWindowShouldClose(glfw_window); }
 
-void Window::frame() {
+void Window::finish_frame() {
     glfwSwapBuffers(glfw_window);
     glfwPollEvents();
 }

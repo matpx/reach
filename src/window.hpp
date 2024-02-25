@@ -15,7 +15,7 @@ class Window : NoCopy {
         ~Window();
 
         bool should_close();
-        void frame();
+        void finish_frame();
 };
 
 } // namespace reach

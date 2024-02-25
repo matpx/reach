@@ -10,7 +10,7 @@ App::App()
 
 void App::run() {
     while (!window->should_close()) {
-        window->frame();
+        window->finish_frame();
     }
 }
 
