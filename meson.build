@@ -17,9 +17,9 @@ shader = custom_target('targetname',
 
 cmake = import('cmake')
 
-expected_lib = cmake.subproject('expected').dependency('expected')
-glfw_lib = cmake.subproject('glfw').dependency('glfw')
-entt_lib = cmake.subproject('entt').dependency('EnTT')
+expected_dep = cmake.subproject('expected').dependency('expected')
+glfw_dep = cmake.subproject('glfw').dependency('glfw')
+entt_dep = cmake.subproject('entt').dependency('EnTT')
 
 src = [
     'src/main.cpp',
@@ -31,7 +31,7 @@ src = [
 
 # main executable
 
-deps = [expected_lib, glfw_lib, entt_lib]
+deps = [expected_dep, glfw_dep, subproject('sokol').get_variable('sokol_dep'), entt_dep]
 
 if build_machine.system() == 'linux'
     deps += dependency('gl')
@@ -39,5 +39,4 @@ endif
 
 executable('reach',
     src + shader,
-    include_directories: ['subprojects'],
     dependencies: deps)

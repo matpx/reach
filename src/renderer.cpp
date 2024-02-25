@@ -1,7 +1,7 @@
 #include "renderer.hpp"
 #include "log.hpp"
-#include "sokol/sokol_gfx.h"
-#include "sokol/sokol_log.h"
+#include "sokol_gfx.h"
+#include "sokol_log.h"
 #include "src/renderer.hpp"
 
 namespace reach {
