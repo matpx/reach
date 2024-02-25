@@ -2,6 +2,7 @@ project('reach', 'c', 'cpp', default_options: ['cpp_std=c++20'])
 
 cmake = import('cmake')
 
+expected_lib = cmake.subproject('expected').dependency('expected')
 glfw_lib = cmake.subproject('glfw').dependency('glfw')
 entt_lib = cmake.subproject('entt').dependency('EnTT')
 
@@ -23,4 +24,4 @@ shader = custom_target('targetname',
 executable('reach',
     src + shader,
     include_directories: ['subprojects'],
-    dependencies: [glfw_lib, entt_lib])
+    dependencies: [expected_lib, glfw_lib, entt_lib])

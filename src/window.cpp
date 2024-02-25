@@ -34,7 +34,7 @@ Window::~Window() {
     glfwTerminate();
 }
 
-bool Window::should_close() { return glfwWindowShouldClose(glfw_window); }
+bool Window::should_close() { return glfwWindowShouldClose(glfw_window) || glfwGetKey(glfw_window, GLFW_KEY_ESCAPE); }
 
 void Window::finish_frame() {
     glfwSwapBuffers(glfw_window);
