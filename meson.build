@@ -2,7 +2,11 @@ project('reach', 'c', 'cpp', default_options: ['cpp_std=c++20'])
 
 # shader
 
-shdc = find_program('sokol-shdc', dirs: [join_paths(meson.current_source_dir(), 'tools/sokol-tools-bin/bin/win32')], required: true)
+shdc = find_program('sokol-shdc',
+    dirs: [
+        join_paths(meson.current_source_dir(), 'tools/sokol-tools-bin/bin/win32'),
+        join_paths(meson.current_source_dir(), 'tools/sokol-tools-bin/bin/linux')],
+    required: true)
 
 shader = custom_target('targetname',
     output : 'unlit.glsl.h',
@@ -27,7 +31,13 @@ src = [
 
 # main executable
 
+deps = [expected_lib, glfw_lib, entt_lib]
+
+if build_machine.system() == 'linux'
+    deps += dependency('gl')
+endif
+
 executable('reach',
     src + shader,
     include_directories: ['subprojects'],
-    dependencies: [expected_lib, glfw_lib, entt_lib])
+    dependencies: deps)
