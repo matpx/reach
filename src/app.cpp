@@ -10,6 +10,8 @@ App::App()
 
 void App::run() {
     while (!window->should_close()) {
+        world->update_transforms();
+
         window->finish_frame();
     }
 }

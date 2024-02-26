@@ -13,32 +13,33 @@ shader = custom_target('targetname',
     input : 'src/shader/unlit.glsl',
     command : [shdc, '--slang=glsl330', '--input=@INPUT@', '--output=@OUTPUT@'])
 
-# dependencies
+# main executable
 
 cmake = import('cmake')
 
-expected_dep = cmake.subproject('expected').dependency('expected')
-glfw_dep = cmake.subproject('glfw').dependency('glfw')
-entt_dep = cmake.subproject('entt').dependency('EnTT')
+deps = [
+    cmake.subproject('expected').dependency('expected'),
+    cmake.subproject('glm').dependency('glm'),
+    cmake.subproject('glfw').dependency('glfw'),
+    cmake.subproject('entt').dependency('EnTT'),
+    subproject('sokol').get_variable('sokol_dep')
+]
+
+if build_machine.system() == 'linux'
+    deps += dependency('gl')
+endif
 
 src = [
     'src/main.cpp',
     'src/impl.c',
     'src/app.cpp',
     'src/window.cpp',
-    'src/renderer.cpp'
+    'src/renderer.cpp',
+    'src/world.cpp'
 ]
-
-# main executable
-
-deps = [expected_dep, glfw_dep, subproject('sokol').get_variable('sokol_dep'), entt_dep]
-
-if build_machine.system() == 'linux'
-    deps += dependency('gl')
-endif
 
 executable('reach',
     src + shader,
     dependencies: deps,
     override_options : ['cpp_std=c++20', 'cpp_eh=none', 'cpp_rtti=false', 'werror=true', 'warning_level=3'],
-    cpp_args : ['-DENTT_NOEXCEPTION', '-D_HAS_EXCEPTIONS=0'])
+    cpp_args : ['-D_HAS_EXCEPTIONS=0', '-DGLM_ENABLE_EXPERIMENTAL', '-DENTT_NOEXCEPTION'])

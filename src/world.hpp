@@ -6,6 +6,9 @@
 
 namespace reach {
 
-class World : entt::registry, NoCopy {};
+class World : entt::registry, NoCopy {
+    public:
+        void update_transforms();
+};
 
 } // namespace reach

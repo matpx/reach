@@ -1,6 +1,5 @@
 #include "renderer.hpp"
 #include "log.hpp"
-#include "sokol_gfx.h"
 #include "src/renderer.hpp"
 
 #include "unlit.glsl.h"
@@ -22,7 +21,6 @@ Renderer::Renderer() {
     const sg_shader unlit_shader = sg_make_shader(unlit_shader_desc(sg_query_backend()));
 
     sg_pipeline_desc unlit_pipeline_desc = {};
-
     unlit_pipeline_desc.layout.attrs[ATTR_vs_position].format = SG_VERTEXFORMAT_FLOAT3;
     unlit_pipeline_desc.shader = unlit_shader;
     unlit_pipeline_desc.index_type = SG_INDEXTYPE_UINT16;
@@ -33,7 +31,7 @@ Renderer::Renderer() {
     };
     unlit_pipeline_desc.label = "unlit pipeline";
 
-    sg_pipeline unlit_pipeline = sg_make_pipeline(unlit_pipeline_desc);
+    unlit_pipeline = sg_make_pipeline(unlit_pipeline_desc);
 }
 
 Renderer::~Renderer() { sg_shutdown(); }
