@@ -6,7 +6,7 @@
 
 namespace reach {
 
-void glfw_error_callback(int error, const char *description) { log_error(description); }
+void glfw_error_callback([[maybe_unused]] int error, const char *description) { log_error(description); }
 
 Window::Window() {
     glfwSetErrorCallback(glfw_error_callback);

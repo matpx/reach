@@ -1,4 +1,4 @@
-project('reach', 'c', 'cpp', default_options: ['cpp_std=c++20'])
+project('reach', 'c', 'cpp')
 
 # shader
 
@@ -39,4 +39,6 @@ endif
 
 executable('reach',
     src + shader,
-    dependencies: deps)
+    dependencies: deps,
+    override_options : ['cpp_std=c++20', 'cpp_eh=none', 'cpp_rtti=false', 'werror=true', 'warning_level=3'],
+    cpp_args : ['-DENTT_NOEXCEPTION', '-D_HAS_EXCEPTIONS=0'])
