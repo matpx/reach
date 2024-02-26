@@ -15,7 +15,7 @@ void sokol_log([[maybe_unused]] const char *tag, [[maybe_unused]] uint32_t log_l
 Renderer::Renderer() {
     sg_setup(sg_desc{.logger = {.func = sokol_log}});
     if (!sg_isvalid()) {
-        log_fatal_and_abort("sg_setup() failed");
+        panic("sg_setup() failed");
     }
 
     const sg_shader unlit_shader = sg_make_shader(unlit_shader_desc(sg_query_backend()));

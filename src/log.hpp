@@ -1,11 +1,17 @@
 #pragma once
 
 #include <cstdio>
-#include <string>
+#include <string_view>
 
-inline void log_error(const std::string &message) { printf("[ERROR]: %s\n", message.c_str()); }
+namespace reach {
 
-inline void log_fatal_and_abort(const std::string &message) {
-    printf("[FATAL]: %s\n", message.c_str());
+inline void log_error(const std::string_view message) { printf("[ERROR]: %s\n", message.data()); }
+
+inline void log_fatal(const std::string_view message) { printf("[FATAL]: %s\n", message.data()); }
+
+inline void panic(const std::string_view message) {
+    log_fatal(message);
     std::abort();
 }
+
+} // namespace reach

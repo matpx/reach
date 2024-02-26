@@ -12,7 +12,7 @@ Window::Window() {
     glfwSetErrorCallback(glfw_error_callback);
 
     if (!glfwInit()) {
-        log_fatal_and_abort("glfwInit() failed");
+        panic("glfwInit() failed");
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -22,7 +22,7 @@ Window::Window() {
 
     glfw_window = glfwCreateWindow(1200, 800, "Reach", NULL, NULL);
     if (!glfw_window) {
-        log_fatal_and_abort("glfwCreateWindow() failed");
+        panic("glfwCreateWindow() failed");
     }
 
     glfwMakeContextCurrent(glfw_window);
