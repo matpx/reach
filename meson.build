@@ -34,9 +34,10 @@ src = [
     'src/impl.c',
     'src/app.cpp',
     'src/manager/window_manager.cpp',
-    'src/manager/renderer_manager.cpp',
+    'src/manager/device_manager.cpp',
     'src/manager/material_manager.cpp',
-    'src/world.cpp'
+    'src/systems/transform_system.cpp',
+    'src/systems/render_system.cpp'
 ]
 
 executable('reach',

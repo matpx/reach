@@ -1,4 +1,4 @@
-#include "renderer_manager.hpp"
+#include "device_manager.hpp"
 #include "log.hpp"
 #include "sokol_gfx.h"
 
@@ -10,13 +10,13 @@ void sokol_log([[maybe_unused]] const char *tag, [[maybe_unused]] uint32_t log_l
     log_error(message);
 }
 
-RendererManager::RendererManager() {
+DeviceManager::DeviceManager() {
     sg_setup(sg_desc{.logger = {.func = sokol_log}});
     if (!sg_isvalid()) {
         panic("sg_setup() failed");
     }
 }
 
-RendererManager::~RendererManager() { sg_shutdown(); }
+DeviceManager::~DeviceManager() { sg_shutdown(); }
 
 } // namespace reach

@@ -3,7 +3,6 @@
 #include "components/material_component.hpp"
 #include "nocopy.hpp"
 
-
 namespace reach {
 
 class MaterialManager : NoCopy {

@@ -4,10 +4,10 @@
 
 namespace reach {
 
-class RendererManager : NoCopy {
+class DeviceManager : NoCopy {
     public:
-        RendererManager();
-        ~RendererManager();
+        DeviceManager();
+        ~DeviceManager();
 };
 
 } // namespace reach

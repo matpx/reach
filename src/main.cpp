@@ -1,6 +1,6 @@
 #include "app.hpp"
 #include "manager/material_manager.hpp"
-#include "manager/renderer_manager.hpp"
+#include "manager/device_manager.hpp"
 #include "manager/window_manager.hpp"
 #include "world.hpp"
 

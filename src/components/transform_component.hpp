@@ -5,7 +5,6 @@
 #include "mat4x4.hpp"
 #include "vec3.hpp"
 
-
 namespace reach {
 
 struct TransformComponent {
