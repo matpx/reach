@@ -1,4 +1,4 @@
-#include "window.hpp"
+#include "window_manager.hpp"
 #include "log.hpp"
 
 #define GLFW_INCLUDE_NONE
@@ -8,7 +8,7 @@ namespace reach {
 
 void glfw_error_callback([[maybe_unused]] int error, const char *description) { log_error(description); }
 
-Window::Window() {
+WindowManager::WindowManager() {
     glfwSetErrorCallback(glfw_error_callback);
 
     if (!glfwInit()) {
@@ -29,14 +29,14 @@ Window::Window() {
     glfwSwapInterval(1);
 }
 
-Window::~Window() {
+WindowManager::~WindowManager() {
     glfwDestroyWindow(glfw_window);
     glfwTerminate();
 }
 
-bool Window::should_close() { return glfwWindowShouldClose(glfw_window) || glfwGetKey(glfw_window, GLFW_KEY_ESCAPE); }
+bool WindowManager::should_close() { return glfwWindowShouldClose(glfw_window) || glfwGetKey(glfw_window, GLFW_KEY_ESCAPE); }
 
-void Window::finish_frame() {
+void WindowManager::finish_frame() {
     glfwSwapBuffers(glfw_window);
     glfwPollEvents();
 }

@@ -6,13 +6,13 @@ struct GLFWwindow;
 
 namespace reach {
 
-class Window : NoCopy {
+class WindowManager : NoCopy {
     private:
         GLFWwindow *glfw_window = nullptr;
 
     public:
-        Window();
-        ~Window();
+        WindowManager();
+        ~WindowManager();
 
         bool should_close();
         void finish_frame();

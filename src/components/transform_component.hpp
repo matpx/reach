@@ -8,7 +8,7 @@
 
 namespace reach {
 
-struct Transform {
+struct TransformComponent {
         glm::mat4 model;
 
         glm::vec3 translation;

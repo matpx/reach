@@ -33,13 +33,15 @@ src = [
     'src/main.cpp',
     'src/impl.c',
     'src/app.cpp',
-    'src/window.cpp',
-    'src/renderer.cpp',
+    'src/manager/window_manager.cpp',
+    'src/manager/renderer_manager.cpp',
+    'src/manager/material_manager.cpp',
     'src/world.cpp'
 ]
 
 executable('reach',
     src + shader,
     dependencies: deps,
+    include_directories: ['src/'],
     override_options : ['cpp_std=c++20', 'cpp_eh=none', 'cpp_rtti=false', 'werror=true', 'warning_level=3'],
     cpp_args : ['-D_HAS_EXCEPTIONS=0', '-DGLM_ENABLE_EXPERIMENTAL', '-DENTT_NOEXCEPTION'])

@@ -1,7 +1,9 @@
 #include "app.hpp"
-#include "renderer.hpp"
-#include "window.hpp"
+#include "manager/material_manager.hpp"
+#include "manager/renderer_manager.hpp"
+#include "manager/window_manager.hpp"
 #include "world.hpp"
+
 
 using namespace reach;
 
