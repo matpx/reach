@@ -19,6 +19,7 @@ cmake = import('cmake')
 
 deps = [
     cmake.subproject('expected').dependency('expected'),
+    cmake.subproject('spdlog').dependency('spdlog'),
     cmake.subproject('glm').dependency('glm'),
     cmake.subproject('glfw').dependency('glfw'),
     cmake.subproject('entt').dependency('EnTT'),
@@ -45,4 +46,4 @@ executable('reach',
     dependencies: deps,
     include_directories: ['src/'],
     override_options : ['cpp_std=c++20', 'cpp_eh=none', 'cpp_rtti=false', 'werror=true', 'warning_level=3'],
-    cpp_args : ['-D_HAS_EXCEPTIONS=0', '-DGLM_ENABLE_EXPERIMENTAL', '-DENTT_NOEXCEPTION'])
+    cpp_args : ['-D_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING', '-D_HAS_EXCEPTIONS=0', '-DGLM_ENABLE_EXPERIMENTAL', '-DENTT_NOEXCEPTION'])

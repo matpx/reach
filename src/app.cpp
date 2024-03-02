@@ -4,6 +4,7 @@
 #include "manager/window_manager.hpp"
 #include "systems/render_system.hpp"
 #include "systems/transform_system.hpp"
+#include "utils/log.hpp"
 #include "world.hpp"
 
 namespace reach {
@@ -13,6 +14,12 @@ App::App()
       material(std::make_unique<MaterialManager>()), world(std::make_unique<World>()) {}
 
 void App::run() {
+#ifndef NDEBUG
+    spdlog::set_level(spdlog::level::debug);
+#endif
+
+    log_debug("debug mode!");
+
     while (!window->should_close()) {
         transform_system::update(*world);
         render_system::update();

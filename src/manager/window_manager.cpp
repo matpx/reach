@@ -1,5 +1,5 @@
 #include "window_manager.hpp"
-#include "log.hpp"
+#include "utils/panic.hpp"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"

@@ -1,5 +1,5 @@
 #include "device_manager.hpp"
-#include "log.hpp"
+#include "utils/panic.hpp"
 #include "sokol_gfx.h"
 
 namespace reach {
