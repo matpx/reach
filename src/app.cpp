@@ -18,7 +18,7 @@ void App::run() {
     spdlog::set_level(spdlog::level::debug);
 #endif
 
-    log_debug("debug mode!");
+    LOG_DEBUG("debug mode!");
 
     while (!window->should_close()) {
         transform_system::update(*world);

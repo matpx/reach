@@ -4,9 +4,9 @@
 
 namespace reach {
 
-template <typename... T> inline void panic(T... args) {
-    log_error(std::forward<T>(args)...);
+#define PANIC(...)                                                                                                     \
+    LOG_ERROR(__VA_ARGS__);                                                                                            \
+    LOG_ERROR("aborting!");                                                                                            \
     std::abort();
-}
 
 } // namespace reach

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sokol_gfx.h"
+#include <sokol_gfx.h>
 
 namespace reach {
 

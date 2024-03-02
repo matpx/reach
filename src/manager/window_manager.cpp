@@ -7,13 +7,13 @@
 
 namespace reach {
 
-void glfw_error_callback([[maybe_unused]] int error, const char *description) { log_error(description); }
+void glfw_error_callback([[maybe_unused]] int error, const char *description) { LOG_ERROR(description); }
 
 WindowManager::WindowManager() {
     glfwSetErrorCallback(glfw_error_callback);
 
     if (!glfwInit()) {
-        panic("glfwInit() failed");
+        PANIC("glfwInit() failed");
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -23,7 +23,7 @@ WindowManager::WindowManager() {
 
     glfw_window = glfwCreateWindow(1200, 800, "Reach", NULL, NULL);
     if (!glfw_window) {
-        panic("glfwCreateWindow() failed");
+        PANIC("glfwCreateWindow() failed");
     }
 
     glfwMakeContextCurrent(glfw_window);
