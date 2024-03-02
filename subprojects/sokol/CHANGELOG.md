@@ -1,5 +1,111 @@
 ## Updates
 
+### 02-Mar-2024:
+
+- sokol_app.h emscripten: two new flags in `sapp_desc` to configure the Emscripten main loop:
+  - `.html5_use_emsc_set_main_loop`: when this is true, the function `emscripten_set_main_loop()` will be used
+    to drive the sokol-app frame callback (otherwise `emscripten_request_animation_frame()` as before)
+  - `.html5_emsc_set_main_loop_simulate_infinite_loop`: this is passed as the `simulate_infinite_loop` parameter
+    into the `emscripten_set_main_loop()` function.
+
+  In general you should stick with sokol_app.h's default behaviour and only use those settings if you run
+  into specific problems, for instance as discussed here: https://github.com/floooh/sokol/issues/843
+
+  Related PR: https://github.com/floooh/sokol/pull/997
+
+  Many thanks to @Dvad for the PR, and also to @ambrusc for an alternative PR that hadn't been used, @voidware
+  for kicking off the discussion and all contributors!
+
+  The sample `texcube-sapp` has been updated to use the set-main-loop method:
+
+  https://floooh.github.io/sokol-html5/texcube-sapp.html
+
+- sokol_imgui.h: PR https://github.com/floooh/sokol/pull/994 has been merged, this adds two
+  font management helper functions which drastically reduce boilerplate code
+  when injecting a custom font into Dear ImGui via sokol_imgui.h.
+
+  See the PR for details, and the updated sample https://floooh.github.io/sokol-html5/imgui-highdpi-sapp.html
+  via this PR: https://github.com/floooh/sokol-samples/pull/135
+
+  Many thanks to @Dvad for the PR!
+
+### 01-Mar-2024:
+
+Minor regression fix for yesterdays merge in the sokol_gfx.h Metal backend:
+
+A swapchain render pass with an SG_PIXELFORMAT_DEPTH depth-buffer would try
+to set a stencil surface (currently this only matters if you use your own
+window system glue since sokol_app.h always creates a depth+stencil-buffer).
+
+See https://github.com/floooh/sokol/issues/1004 for details.
+
+The [Metal samples in the sokol-samples project](https://github.com/floooh/sokol-samples/tree/master/metal) have been updated to use all variants
+of SG_PIXELFORMAT_NONE, SG_PIXELFORMAT_DEPTH and SG_PIXELFORMAT_DEPTH_STENCIL
+now to catch similar regressions in the future.
+
+Plus 2 minor drive-by fixes:
+
+- fix the sokol_gfx.h WebGPU backend for a spec-fix in Chrome (see https://github.com/floooh/sokol/issues/1003)
+- in the Emscripten backends of sokol_app.h and sokol_args.h, replace the deprecated JS helper function
+  `allocateUTF8OnStack` with its replacement `stringToUTF8OnStack` (see: https://github.com/floooh/sokol/commit/49a75e1476153cb2605d3b3ebd2f07e3eb0536d9)
+
+### 29-Feb-2024:
+
+**BREAKING CHANGES** in sokol_gfx.h, sokol_app.h, sokol_glue.h and sokol_gfx_imgui.h
+(the 'big render pass cleanup').
+
+- In sokol_gfx.h, the concepts of 'render contexts' and 'default render passes' have
+  been removed and replaced with a unified `sg_begin_pass()` which handles both
+  rendering into 'offscreen-passes' and 'swapchain-passes'.
+
+  [Please read this blog
+  post](https://floooh.github.io/2024/02/26/sokol-spring-cleaning-2024.html)
+  carefully for a detailed overview what has changed, why the changes make
+  sense, and how existing code needs to be updated.
+
+  Also see the related PR for further details: https://github.com/floooh/sokol/pull/985
+
+- There are also minimal related changes in the sokol_app.h and a complete
+  rewrite of the sokol_glue.h APIs, also detailed in the above blog post.
+
+- The namespace-prefix for the header sokol_gfx_imgui.h has been changed from
+  `sg_imgui_` to `sgimgui_`.
+
+- In sokol_gfx.h with the Metal backend, a runtime configuration flag has been
+  added to `sg_desc` to create a Metal command buffer with
+  'retained-references'. See issue
+  [#981](https://github.com/floooh/sokol/issues/981) for details.
+
+- Also in sokol_gfx.h, the struct item `sg_limits.gl_max_vertex_uniform_vectors` has been changed
+  to `sg_limits.gl_max_vertex_uniform_components` (note that there are 4x more 'components'
+  than 'vectors'). See issue [#714](https://github.com/floooh/sokol/issues/714) for details.
+
+- All sampples, language binding examples and 'side projects' have been updated, see the above blog post
+  for links to the respective PRs.
+
+### 27-Feb-2024:
+
+- Merged PR https://github.com/floooh/sokol/pull/1001, this is a small fix for GLES3 to avoid
+  calling glInvalidateFramebuffer() on non-existing depth/stencil surfaces.
+
+  Many thanks to @danielchasehooper!
+
+#### 26-Feb-2024:
+
+- Minor fix in sokol_imgui.h: The drawing code now detects and skips the special
+  `ImDrawCallback_ResetRenderState` constant, not doing so would try to call a function
+  at address (-8) which then results in a crash.
+
+  See for what this is: https://github.com/ocornut/imgui/blob/277ae93c41314ba5f4c7444f37c4319cdf07e8cf/imgui.h#L2583-L2587
+
+  sokol_imgui.h doesn't have any handling for this special callback, it will just ignore it.
+
+  As a minor additional behaviour change, any user callback will now also cause `sg_reset_state_cache()`
+  to be called. This is just a precaution in case the user callback code calls any native 3D backend API
+  functions.
+
+  Related issue: https://github.com/floooh/sokol/issues/1000
+
 #### 21-Feb-2024:
 
 - PR https://github.com/floooh/sokol/pull/993 has been merged, this allows to inject

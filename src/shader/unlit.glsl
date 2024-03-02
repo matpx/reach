@@ -1,12 +1,13 @@
 @vs vs
-uniform vs_params {
-    mat4 mvp;
-};
+// uniform vs_params {
+//     mat4 mvp;
+// };
 
-in vec4 position;
+in vec3 position;
 
 void main() {
-    gl_Position = mvp * position;
+    // gl_Position = mvp * position;
+    gl_Position = vec4(position, 1.0);
 }
 @end
 

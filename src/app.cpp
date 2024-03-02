@@ -10,8 +10,8 @@
 namespace reach {
 
 App::App()
-    : window(std::make_unique<WindowManager>()), renderer(std::make_unique<DeviceManager>()),
-      material(std::make_unique<MaterialManager>()), world(std::make_unique<World>()) {}
+    : window_manager(std::make_unique<WindowManager>()), device_manager(std::make_unique<DeviceManager>()),
+      material_manager(std::make_unique<MaterialManager>()), world(std::make_unique<World>()) {}
 
 void App::run() {
 #ifndef NDEBUG
@@ -20,11 +20,11 @@ void App::run() {
 
     LOG_DEBUG("debug mode!");
 
-    while (!window->should_close()) {
+    while (!window_manager->should_close()) {
         transform_system::update(*world);
-        render_system::update();
+        render_system::update(*device_manager, *material_manager);
 
-        window->finish_frame();
+        window_manager->finish_frame();
     }
 }
 

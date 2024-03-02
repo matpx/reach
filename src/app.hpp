@@ -13,9 +13,9 @@ class World;
 
 class App : NoCopy {
     private:
-        std::unique_ptr<WindowManager> window;
-        std::unique_ptr<DeviceManager> renderer;
-        std::unique_ptr<MaterialManager> material;
+        std::unique_ptr<WindowManager> window_manager;
+        std::unique_ptr<DeviceManager> device_manager;
+        std::unique_ptr<MaterialManager> material_manager;
         std::unique_ptr<World> world;
 
     public:

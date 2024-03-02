@@ -1,7 +1,6 @@
 #include <manager/window_manager.hpp>
 #include <utils/panic.hpp>
 
-
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -16,6 +15,7 @@ WindowManager::WindowManager() {
         PANIC("glfwInit() failed");
     }
 
+    glfwWindowHint(GLFW_SAMPLES, 1);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
