@@ -1,10 +1,11 @@
 #pragma once
 
-#include "nocopy.hpp"
+#include <manager/manager.hpp>
+
 
 namespace reach {
 
-class DeviceManager : NoCopy {
+class DeviceManager final : public Manager {
     public:
         DeviceManager();
         ~DeviceManager();

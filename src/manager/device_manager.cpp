@@ -1,6 +1,6 @@
-#include "device_manager.hpp"
-#include "utils/panic.hpp"
-#include "sokol_gfx.h"
+#include <manager/device_manager.hpp>
+#include <sokol_gfx.h>
+#include <utils/panic.hpp>
 
 namespace reach {
 

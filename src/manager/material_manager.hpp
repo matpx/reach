@@ -1,11 +1,11 @@
 #pragma once
 
-#include "components/material_component.hpp"
-#include "nocopy.hpp"
+#include <components/material_component.hpp>
+#include <manager/manager.hpp>
 
 namespace reach {
 
-class MaterialManager : NoCopy {
+class MaterialManager final : public Manager {
     public:
         MaterialManager();
         ~MaterialManager();

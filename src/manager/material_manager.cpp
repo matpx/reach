@@ -1,7 +1,7 @@
-#include "material_manager.hpp"
-#include "sokol_gfx.h"
+#include <manager/material_manager.hpp>
+#include <sokol_gfx.h>
 
-#include "unlit.glsl.h"
+#include <unlit.glsl.h>
 
 namespace reach {
 

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "nocopy.hpp"
+#include <manager/manager.hpp>
 
 struct GLFWwindow;
 
 namespace reach {
 
-class WindowManager : NoCopy {
+class WindowManager final : public Manager {
     private:
         GLFWwindow *glfw_window = nullptr;
 
