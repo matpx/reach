@@ -21,8 +21,8 @@ void App::run() {
     LOG_DEBUG("debug mode!");
 
     while (!window_manager->should_close()) {
-        transform_system::update(*world);
-        render_system::update(*device_manager, *material_manager);
+        transform_system::update();
+        render_system::update();
 
         window_manager->finish_frame();
     }

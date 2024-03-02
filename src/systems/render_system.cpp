@@ -1,3 +1,4 @@
+#include "components/material_component.hpp"
 #include <components/mesh_component.hpp>
 #include <manager/device_manager.hpp>
 #include <manager/material_manager.hpp>
@@ -5,7 +6,7 @@
 
 namespace reach::render_system {
 
-void update(DeviceManager &device_manager, MaterialManager &material_manager) {
+void update() {
     static bool first_run = true;
 
     static MeshComponent triangle_mesh = {
@@ -20,12 +21,12 @@ void update(DeviceManager &device_manager, MaterialManager &material_manager) {
             .index_data = {2, 1, 0},
         });
 
-        device_manager.update_mesh(triangle_mesh);
+        DeviceManager::get().update_mesh(triangle_mesh);
     }
 
-    device_manager.begin_frame();
-    device_manager.draw_mesh(material_manager.unlit_material, triangle_mesh);
-    device_manager.finish_frame();
+    DeviceManager::get().begin_frame();
+    DeviceManager::get().draw_mesh(MaterialManager::get().unlit_material, triangle_mesh);
+    DeviceManager::get().finish_frame();
 }
 
 } // namespace reach::render_system

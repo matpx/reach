@@ -11,6 +11,8 @@ class WindowManager final : public Manager {
         GLFWwindow *glfw_window = nullptr;
 
     public:
+        static WindowManager &get();
+
         WindowManager();
         ~WindowManager();
 

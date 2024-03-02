@@ -9,6 +9,8 @@ struct MaterialComponent;
 
 class DeviceManager final : public Manager {
     public:
+        static DeviceManager &get();
+
         DeviceManager();
         ~DeviceManager();
 

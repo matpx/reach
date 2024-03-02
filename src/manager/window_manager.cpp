@@ -8,6 +8,10 @@ namespace reach {
 
 void glfw_error_callback([[maybe_unused]] int error, const char *description) { LOG_ERROR(description); }
 
+static WindowManager *self = nullptr;
+
+WindowManager &WindowManager::get() { return *self; }
+
 WindowManager::WindowManager() {
     glfwSetErrorCallback(glfw_error_callback);
 
@@ -28,9 +32,13 @@ WindowManager::WindowManager() {
 
     glfwMakeContextCurrent(glfw_window);
     glfwSwapInterval(1);
+
+    self = this;
 }
 
 WindowManager::~WindowManager() {
+    self = nullptr;
+
     glfwDestroyWindow(glfw_window);
     glfwTerminate();
 }

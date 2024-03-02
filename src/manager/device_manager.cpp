@@ -13,6 +13,10 @@ void sokol_log([[maybe_unused]] const char *tag, [[maybe_unused]] uint32_t log_l
     LOG_ERROR(message);
 }
 
+static DeviceManager *self = nullptr;
+
+DeviceManager &DeviceManager::get() { return *self; }
+
 DeviceManager::DeviceManager() {
     const sg_environment environment = {.defaults = {
                                             .color_format = SG_PIXELFORMAT_RGBA8,
@@ -25,9 +29,14 @@ DeviceManager::DeviceManager() {
     if (!sg_isvalid()) {
         PANIC("sg_setup() failed");
     }
+
+    self = this;
 }
 
-DeviceManager::~DeviceManager() { sg_shutdown(); }
+DeviceManager::~DeviceManager() {
+    self = nullptr;
+    sg_shutdown();
+}
 
 void DeviceManager::update_mesh(MeshComponent &mesh_component) {
     if (!mesh_component.mesh_data) {

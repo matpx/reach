@@ -34,6 +34,7 @@ src = [
     'src/main.cpp',
     'src/impl.c',
     'src/app.cpp',
+    'src/world.cpp',
     'src/manager/window_manager.cpp',
     'src/manager/device_manager.cpp',
     'src/manager/material_manager.cpp',

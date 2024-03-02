@@ -5,6 +5,10 @@
 
 namespace reach {
 
+static MaterialManager *self = nullptr;
+
+MaterialManager &MaterialManager::get() { return *self; }
+
 MaterialManager::MaterialManager() {
     const sg_shader unlit_shader = sg_make_shader(unlit_shader_desc(sg_query_backend()));
 
@@ -20,8 +24,10 @@ MaterialManager::MaterialManager() {
     unlit_pipeline_desc.label = "unlit pipeline";
 
     unlit_material.pipeline = sg_make_pipeline(unlit_pipeline_desc);
+
+    self = this;
 }
 
-MaterialManager::~MaterialManager() {}
+MaterialManager::~MaterialManager() { self = nullptr; }
 
 } // namespace reach
