@@ -19,7 +19,7 @@ class DeviceManager final : public Manager {
         void unload_mesh(MeshComponent &mesh_component);
 
         void begin_frame();
-        void draw_mesh(const TransformComponent &transform, const MaterialComponent &material,
+        void draw_mesh(const TransformComponent &transform_component, const MaterialComponent &material_component,
                        const MeshComponent &mesh_component);
         void finish_frame();
 };

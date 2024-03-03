@@ -10,8 +10,8 @@ namespace reach {
 struct TransformComponent {
         glm::mat4 model;
 
-        glm::vec3 translation;
-        glm::quat rotation;
+        glm::vec3 translation = glm::zero<glm::vec3>();
+        glm::quat rotation = glm::identity<glm::quat>();
 };
 
 } // namespace reach

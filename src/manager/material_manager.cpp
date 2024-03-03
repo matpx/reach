@@ -24,6 +24,8 @@ MaterialManager::MaterialManager() {
     unlit_pipeline_desc.label = "unlit pipeline";
 
     unlit_material.pipeline = sg_make_pipeline(unlit_pipeline_desc);
+    unlit_material.uniform_transform_slot =
+        static_cast<uint8_t>(unlit_uniformblock_slot(SG_SHADERSTAGE_VS, "transform_params"));
 
     self = this;
 }

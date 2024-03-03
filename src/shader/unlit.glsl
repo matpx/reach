@@ -1,5 +1,5 @@
 @vs vs
-uniform vs_params {
+uniform transform_params {
     mat4 mvp;
 };
 

@@ -98,17 +98,17 @@ void DeviceManager::begin_frame() {
     sg_begin_pass(sg_pass{.action = pass_action, .swapchain = swapchain});
 }
 
-void DeviceManager::draw_mesh(const TransformComponent &, const MaterialComponent &material,
-                              const MeshComponent &mesh) {
-    const glm::mat4 mvp = glm::identity<glm::mat4>();
+void DeviceManager::draw_mesh(const TransformComponent &transform_component,
+                              const MaterialComponent &material_component, const MeshComponent &mesh_component) {
+    const glm::mat4 mode_view_projection = transform_component.model;
 
-    sg_apply_pipeline(material.pipeline);
-    sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, SG_RANGE(mvp));
+    sg_apply_pipeline(material_component.pipeline);
+    sg_apply_uniforms(SG_SHADERSTAGE_VS, material_component.uniform_transform_slot, SG_RANGE(mode_view_projection));
     sg_apply_bindings(sg_bindings{
-        .vertex_buffers = {mesh.vertex_buffer},
-        .index_buffer = mesh.index_buffer,
+        .vertex_buffers = {mesh_component.vertex_buffer},
+        .index_buffer = mesh_component.index_buffer,
     });
-    sg_draw(0, mesh.index_count, 1);
+    sg_draw(0, mesh_component.index_count, 1);
 }
 
 void DeviceManager::finish_frame() {
