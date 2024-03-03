@@ -2,4 +2,4 @@
 
 set -e
 
-meson setup build --reconfigure
+meson setup build --wipe

@@ -44,15 +44,11 @@ void DeviceManager::update_mesh(MeshComponent &mesh_component) {
         return;
     }
 
-    LOG_DEBUG("uploading mesh: {}", mesh_component.get_debug_name());
-
-    if (mesh_component.vertex_buffer.id != SG_INVALID_ID) {
-        sg_destroy_buffer(mesh_component.vertex_buffer);
+    if (mesh_component.vertex_buffer.id != SG_INVALID_ID || mesh_component.index_buffer.id != SG_INVALID_ID) {
+        unload_mesh(mesh_component);
     }
 
-    if (mesh_component.index_buffer.id != SG_INVALID_ID) {
-        sg_destroy_buffer(mesh_component.index_buffer);
-    }
+    LOG_DEBUG("updating mesh: {}", mesh_component.get_debug_name());
 
     const auto &mesh_data = mesh_component.mesh_data;
 
