@@ -10,7 +10,7 @@ void update() {
     static bool first_run = true;
 
     static MeshComponent triangle_mesh = {
-        ._debug_name = "triangle mesh",
+        .debug_name = "triangle mesh",
     };
 
     if (first_run) {

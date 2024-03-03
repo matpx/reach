@@ -48,7 +48,7 @@ void DeviceManager::update_mesh(MeshComponent &mesh_component) {
         unload_mesh(mesh_component);
     }
 
-    LOG_DEBUG("updating mesh: {}", mesh_component.get_debug_name());
+    LOG_DEBUG("updating mesh: {}", mesh_component.debug_name);
 
     const auto &mesh_data = mesh_component.mesh_data;
 
@@ -69,7 +69,7 @@ void DeviceManager::update_mesh(MeshComponent &mesh_component) {
 }
 
 void DeviceManager::unload_mesh(MeshComponent &mesh_component) {
-    LOG_DEBUG("unloading mesh: {}", mesh_component.get_debug_name());
+    LOG_DEBUG("unloading mesh: {}", mesh_component.debug_name);
 
     if (mesh_component.vertex_buffer.id != SG_INVALID_ID) {
         sg_destroy_buffer(mesh_component.vertex_buffer);
