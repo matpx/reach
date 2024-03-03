@@ -1,5 +1,6 @@
 #include <components/material_component.hpp>
 #include <components/mesh_component.hpp>
+#include <components/transform_component.hpp>
 #include <manager/device_manager.hpp>
 #include <sokol_gfx.h>
 #include <utils/panic.hpp>
@@ -97,13 +98,17 @@ void DeviceManager::begin_frame() {
     sg_begin_pass(sg_pass{.action = pass_action, .swapchain = swapchain});
 }
 
-void DeviceManager::draw_mesh(const MaterialComponent &material, const MeshComponent &mesh_component) {
+void DeviceManager::draw_mesh(const TransformComponent &, const MaterialComponent &material,
+                              const MeshComponent &mesh) {
+    const glm::mat4 mvp = glm::identity<glm::mat4>();
+
     sg_apply_pipeline(material.pipeline);
+    sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, SG_RANGE(mvp));
     sg_apply_bindings(sg_bindings{
-        .vertex_buffers = {mesh_component.vertex_buffer},
-        .index_buffer = mesh_component.index_buffer,
+        .vertex_buffers = {mesh.vertex_buffer},
+        .index_buffer = mesh.index_buffer,
     });
-    sg_draw(0, mesh_component.index_count, 1);
+    sg_draw(0, mesh.index_count, 1);
 }
 
 void DeviceManager::finish_frame() {

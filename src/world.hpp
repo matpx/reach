@@ -11,6 +11,8 @@ class World : public entt::registry, NoCopy {
 
         World();
         ~World();
+
+        entt::entity current_camera = entt::null;
 };
 
 } // namespace reach

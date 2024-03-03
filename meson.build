@@ -11,7 +11,7 @@ shdc = find_program('sokol-shdc',
 shader = custom_target('targetname',
     output : 'unlit.glsl.h',
     input : 'src/shader/unlit.glsl',
-    command : [shdc, '--slang=glsl330', '--input=@INPUT@', '--output=@OUTPUT@'])
+    command : [shdc, '--slang=glsl330', '--reflection', '--format=sokol', '--input=@INPUT@', '--output=@OUTPUT@'])
 
 # main executable
 
