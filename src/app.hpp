@@ -3,7 +3,6 @@
 #include <memory>
 #include <utils/nocopy.hpp>
 
-
 namespace reach {
 
 class WindowManager;

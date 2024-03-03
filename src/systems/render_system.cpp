@@ -1,4 +1,3 @@
-#include "components/material_component.hpp"
 #include <components/mesh_component.hpp>
 #include <manager/device_manager.hpp>
 #include <manager/material_manager.hpp>

@@ -3,7 +3,6 @@
 #include <data/mesh_data.hpp>
 #include <memory>
 #include <sokol_gfx.h>
-#include <stdint.h>
 #include <string_view>
 
 namespace reach {

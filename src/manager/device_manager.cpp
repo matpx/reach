@@ -1,6 +1,5 @@
 #include <components/material_component.hpp>
 #include <components/mesh_component.hpp>
-#include <iterator>
 #include <manager/device_manager.hpp>
 #include <sokol_gfx.h>
 #include <utils/panic.hpp>

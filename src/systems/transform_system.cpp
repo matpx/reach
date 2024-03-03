@@ -1,5 +1,4 @@
 #include <components/transform_component.hpp>
-#include <systems/render_system.hpp>
 #include <world.hpp>
 
 namespace reach::transform_system {
