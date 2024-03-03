@@ -2,6 +2,7 @@
 #include <components/mesh_component.hpp>
 #include <components/transform_component.hpp>
 #include <manager/device_manager.hpp>
+#include <manager/window_manager.hpp>
 #include <sokol_gfx.h>
 #include <utils/panic.hpp>
 
@@ -21,7 +22,7 @@ DeviceManager::DeviceManager() {
     const sg_environment environment = {.defaults = {
                                             .color_format = SG_PIXELFORMAT_RGBA8,
                                             .depth_format = SG_PIXELFORMAT_DEPTH_STENCIL,
-                                            .sample_count = 1,
+                                            .sample_count = WindowManager::get().get_sample_count(),
                                         }};
 
     sg_setup(sg_desc{.logger = {.func = sokol_log}, .environment = environment});
@@ -83,15 +84,16 @@ void DeviceManager::unload_mesh(MeshComponent &mesh_component) {
 }
 
 void DeviceManager::begin_frame() {
-    sg_swapchain swapchain = {.width = 1200,
-                              .height = 800,
-                              .sample_count = 1,
-                              .color_format = SG_PIXELFORMAT_RGBA8,
-                              .depth_format = SG_PIXELFORMAT_DEPTH_STENCIL,
-                              .gl = {
-                                  // we just assume here that the GL framebuffer is always 0
-                                  .framebuffer = 0,
-                              }};
+    const glm::ivec2 width_height = WindowManager::get().get_width_height();
+
+    const sg_swapchain swapchain = {.width = width_height.x,
+                                    .height = width_height.y,
+                                    .sample_count = WindowManager::get().get_sample_count(),
+                                    .color_format = SG_PIXELFORMAT_RGBA8,
+                                    .depth_format = SG_PIXELFORMAT_DEPTH_STENCIL,
+                                    .gl = {
+                                        .framebuffer = 0,
+                                    }};
 
     sg_pass_action pass_action = {};
 

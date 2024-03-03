@@ -19,13 +19,13 @@ WindowManager::WindowManager() {
         PANIC("glfwInit() failed");
     }
 
-    glfwWindowHint(GLFW_SAMPLES, 1);
+    glfwWindowHint(GLFW_SAMPLES, sample_count);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    glfw_window = glfwCreateWindow(1200, 800, "Reach", NULL, NULL);
+    glfw_window = glfwCreateWindow(width_height.x, width_height.y, "Reach", NULL, NULL);
     if (!glfw_window) {
         PANIC("glfwCreateWindow() failed");
     }

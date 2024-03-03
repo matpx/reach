@@ -7,7 +7,7 @@ namespace reach {
 
 class MaterialManager final : public Manager {
     public:
-        static MaterialManager &get();
+        [[nodiscard]] static MaterialManager &get();
 
         MaterialManager();
         ~MaterialManager();

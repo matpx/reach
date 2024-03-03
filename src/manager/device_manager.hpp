@@ -10,7 +10,7 @@ struct TransformComponent;
 
 class DeviceManager final : public Manager {
     public:
-        static DeviceManager &get();
+        [[nodiscard]] static DeviceManager &get();
 
         DeviceManager();
         ~DeviceManager();

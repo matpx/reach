@@ -7,7 +7,7 @@ namespace reach {
 
 class World : public entt::registry, NoCopy {
     public:
-        static World &current();
+        [[nodiscard]] static World &current();
 
         World();
         ~World();
