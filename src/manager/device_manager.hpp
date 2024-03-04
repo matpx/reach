@@ -9,6 +9,9 @@ struct MaterialComponent;
 struct TransformComponent;
 
 class DeviceManager final : public Manager {
+    private:
+        bool frame_is_active = false;
+
     public:
         [[nodiscard]] static DeviceManager &get();
 

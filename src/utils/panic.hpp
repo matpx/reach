@@ -2,11 +2,7 @@
 
 #include <utils/log.hpp>
 
-namespace reach {
-
 #define PANIC(...)                                                                                                     \
     LOG_ERROR(__VA_ARGS__);                                                                                            \
-    LOG_ERROR("aborting!");                                                                                            \
-    std::abort();
-
-} // namespace reach
+    LOG_ERROR("Terminating after PANIC() was called!");                                                                                            \
+    std::terminate();

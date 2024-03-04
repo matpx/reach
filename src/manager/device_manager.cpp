@@ -4,6 +4,7 @@
 #include <manager/device_manager.hpp>
 #include <manager/window_manager.hpp>
 #include <sokol_gfx.h>
+#include <utils/conditions.hpp>
 #include <utils/panic.hpp>
 
 namespace reach {
@@ -98,10 +99,14 @@ void DeviceManager::begin_frame() {
     sg_pass_action pass_action = {};
 
     sg_begin_pass(sg_pass{.action = pass_action, .swapchain = swapchain});
+
+    frame_is_active = true;
 }
 
 void DeviceManager::draw_mesh(const TransformComponent &transform_component,
                               const MaterialComponent &material_component, const MeshComponent &mesh_component) {
+    PRECONDITION(frame_is_active);
+
     const glm::mat4 mode_view_projection = transform_component.model;
 
     sg_apply_pipeline(material_component.pipeline);
@@ -114,6 +119,8 @@ void DeviceManager::draw_mesh(const TransformComponent &transform_component,
 }
 
 void DeviceManager::finish_frame() {
+    frame_is_active = false;
+
     sg_end_pass();
     sg_commit();
 }
