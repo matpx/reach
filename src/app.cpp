@@ -2,10 +2,12 @@
 #include <manager/device_manager.hpp>
 #include <manager/material_manager.hpp>
 #include <manager/window_manager.hpp>
+#include <systems/player_system.hpp>
 #include <systems/render_system.hpp>
 #include <systems/transform_system.hpp>
 #include <utils/log.hpp>
 #include <world.hpp>
+
 
 namespace reach {
 
@@ -22,6 +24,7 @@ void App::run() {
 
     while (!window_manager->should_close()) {
         transform_system::update();
+        player_system::update();
         render_system::update();
 
         window_manager->finish_frame();

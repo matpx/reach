@@ -39,7 +39,8 @@ src = [
     'src/manager/device_manager.cpp',
     'src/manager/material_manager.cpp',
     'src/systems/transform_system.cpp',
-    'src/systems/render_system.cpp'
+    'src/systems/render_system.cpp',
+    'src/systems/player_system.cpp'
 ]
 
 executable('reach',
