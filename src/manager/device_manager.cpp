@@ -107,14 +107,12 @@ void DeviceManager::begin_main_pass() {
     pass_is_active = true;
 }
 
-void DeviceManager::draw_mesh(const TransformComponent &transform_component,
-                              const MaterialComponent &material_component, const MeshComponent &mesh_component) {
+void DeviceManager::draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,
+                              const MeshComponent &mesh_component) {
     PRECONDITION(pass_is_active);
 
-    const glm::mat4 mode_view_projection = transform_component.model;
-
     sg_apply_pipeline(material_component.pipeline);
-    sg_apply_uniforms(SG_SHADERSTAGE_VS, material_component.uniform_transform_slot, SG_RANGE(mode_view_projection));
+    sg_apply_uniforms(SG_SHADERSTAGE_VS, material_component.uniform_transform_slot, SG_RANGE(model_view_projection));
     sg_apply_bindings(sg_bindings{
         .vertex_buffers = {mesh_component.vertex_buffer},
         .index_buffer = mesh_component.index_buffer,

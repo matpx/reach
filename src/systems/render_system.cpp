@@ -1,3 +1,4 @@
+#include <components/camera_component.hpp>
 #include <components/mesh_component.hpp>
 #include <components/transform_component.hpp>
 #include <manager/device_manager.hpp>
@@ -8,6 +9,8 @@
 namespace reach::render_system {
 
 void update() {
+    auto &world = World::current();
+
     static bool first_run = true;
 
     if (first_run) {
@@ -24,17 +27,26 @@ void update() {
 
         DeviceManager::get().update_mesh(triangle_mesh);
 
-        const auto triangle_entity = World::current().create();
-        World::current().emplace<TransformComponent>(triangle_entity, TransformComponent{});
-        World::current().emplace<MaterialComponent>(triangle_entity, MaterialManager::get().unlit_material);
-        World::current().emplace<MeshComponent>(triangle_entity, triangle_mesh);
+        const auto triangle_entity = world.create();
+        world.emplace<TransformComponent>(triangle_entity, TransformComponent{});
+        world.emplace<MaterialComponent>(triangle_entity, MaterialManager::get().unlit_material);
+        world.emplace<MeshComponent>(triangle_entity, triangle_mesh);
+
+        world.current_camera = world.create();
+        world.emplace<TransformComponent>(world.current_camera, TransformComponent{.translation = {0.0f, 0.0f, 5.0f}});
+        world.emplace<CameraComponent>(world.current_camera, CameraComponent::make(1.4f, 1.0f, 0.1f, 100.0f));
     }
 
     DeviceManager::get().begin_main_pass();
 
+    const glm::mat4 view_projection = world.get<CameraComponent>(world.current_camera).projection *
+                                      glm::inverse(world.get<TransformComponent>(world.current_camera).model);
+
     for (auto [entity, transform, material, mesh] :
-         World::current().view<TransformComponent, MaterialComponent, MeshComponent>().each()) {
-        DeviceManager::get().draw_mesh(transform, material, mesh);
+         world.view<TransformComponent, MaterialComponent, MeshComponent>().each()) {
+        const glm::mat4 model_view_projection = view_projection * transform.model;
+
+        DeviceManager::get().draw_mesh(model_view_projection, material, mesh);
     }
 
     DeviceManager::get().finish_main_pass();
