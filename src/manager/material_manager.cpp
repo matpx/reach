@@ -1,5 +1,6 @@
 #include <manager/material_manager.hpp>
 #include <sokol_gfx.h>
+#include <utils/conditions.hpp>
 
 #include <unlit.glsl.h>
 
@@ -10,7 +11,10 @@ static MaterialManager *self = nullptr;
 MaterialManager &MaterialManager::get() { return *self; }
 
 MaterialManager::MaterialManager() {
+    PRECONDITION(self == nullptr);
+
     const sg_shader unlit_shader = sg_make_shader(unlit_shader_desc(sg_query_backend()));
+    POSTCONDITION(unlit_shader.id != SG_INVALID_ID);
 
     sg_pipeline_desc unlit_pipeline_desc = {};
     unlit_pipeline_desc.layout.attrs[ATTR_vs_position].format = SG_VERTEXFORMAT_FLOAT3;
@@ -24,12 +28,17 @@ MaterialManager::MaterialManager() {
     unlit_pipeline_desc.label = "unlit pipeline";
 
     unlit_material.pipeline = sg_make_pipeline(unlit_pipeline_desc);
+    POSTCONDITION(unlit_material.pipeline.id != SG_INVALID_ID);
+
     unlit_material.uniform_transform_slot =
         static_cast<uint8_t>(unlit_uniformblock_slot(SG_SHADERSTAGE_VS, "transform_params"));
 
     self = this;
 }
 
-MaterialManager::~MaterialManager() { self = nullptr; }
+MaterialManager::~MaterialManager() {
+    PRECONDITION(self != nullptr);
+    self = nullptr;
+}
 
 } // namespace reach

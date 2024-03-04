@@ -20,6 +20,8 @@ static DeviceManager *self = nullptr;
 DeviceManager &DeviceManager::get() { return *self; }
 
 DeviceManager::DeviceManager() {
+    PRECONDITION(self == nullptr);
+
     const sg_environment environment = {.defaults = {
                                             .color_format = SG_PIXELFORMAT_RGBA8,
                                             .depth_format = SG_PIXELFORMAT_DEPTH_STENCIL,
@@ -28,14 +30,14 @@ DeviceManager::DeviceManager() {
 
     sg_setup(sg_desc{.logger = {.func = sokol_log}, .environment = environment});
 
-    if (!sg_isvalid()) {
-        PANIC("sg_setup() failed");
-    }
+    POSTCONDITION(sg_isvalid());
 
     self = this;
 }
 
 DeviceManager::~DeviceManager() {
+    PRECONDITION(self != nullptr);
+
     self = nullptr;
     sg_shutdown();
 }
@@ -84,7 +86,9 @@ void DeviceManager::unload_mesh(MeshComponent &mesh_component) {
     }
 }
 
-void DeviceManager::begin_frame() {
+void DeviceManager::begin_main_pass() {
+    PRECONDITION(pass_is_active == false);
+
     const glm::ivec2 width_height = WindowManager::get().get_width_height();
 
     const sg_swapchain swapchain = {.width = width_height.x,
@@ -100,12 +104,12 @@ void DeviceManager::begin_frame() {
 
     sg_begin_pass(sg_pass{.action = pass_action, .swapchain = swapchain});
 
-    frame_is_active = true;
+    pass_is_active = true;
 }
 
 void DeviceManager::draw_mesh(const TransformComponent &transform_component,
                               const MaterialComponent &material_component, const MeshComponent &mesh_component) {
-    PRECONDITION(frame_is_active);
+    PRECONDITION(pass_is_active);
 
     const glm::mat4 mode_view_projection = transform_component.model;
 
@@ -118,8 +122,10 @@ void DeviceManager::draw_mesh(const TransformComponent &transform_component,
     sg_draw(0, mesh_component.index_count, 1);
 }
 
-void DeviceManager::finish_frame() {
-    frame_is_active = false;
+void DeviceManager::finish_main_pass() {
+    PRECONDITION(pass_is_active == true);
+
+    pass_is_active = false;
 
     sg_end_pass();
     sg_commit();

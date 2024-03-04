@@ -1,4 +1,5 @@
 #include <manager/window_manager.hpp>
+#include <utils/conditions.hpp>
 #include <utils/panic.hpp>
 
 #define GLFW_INCLUDE_NONE
@@ -13,11 +14,12 @@ static WindowManager *self = nullptr;
 WindowManager &WindowManager::get() { return *self; }
 
 WindowManager::WindowManager() {
+    PRECONDITION(self == nullptr);
+
     glfwSetErrorCallback(glfw_error_callback);
 
-    if (!glfwInit()) {
-        PANIC("glfwInit() failed");
-    }
+    const int32_t glfw_init_result = glfwInit();
+    POSTCONDITION(glfw_init_result != 0);
 
     glfwWindowHint(GLFW_SAMPLES, sample_count);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -26,9 +28,7 @@ WindowManager::WindowManager() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     glfw_window = glfwCreateWindow(width_height.x, width_height.y, "Reach", NULL, NULL);
-    if (!glfw_window) {
-        PANIC("glfwCreateWindow() failed");
-    }
+    POSTCONDITION(glfw_window != nullptr);
 
     glfwMakeContextCurrent(glfw_window);
     glfwSwapInterval(1);
@@ -37,6 +37,8 @@ WindowManager::WindowManager() {
 }
 
 WindowManager::~WindowManager() {
+    PRECONDITION(self != nullptr);
+
     self = nullptr;
 
     glfwDestroyWindow(glfw_window);

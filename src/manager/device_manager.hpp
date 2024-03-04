@@ -10,7 +10,7 @@ struct TransformComponent;
 
 class DeviceManager final : public Manager {
     private:
-        bool frame_is_active = false;
+        bool pass_is_active = false;
 
     public:
         [[nodiscard]] static DeviceManager &get();
@@ -21,10 +21,10 @@ class DeviceManager final : public Manager {
         void update_mesh(MeshComponent &mesh_component);
         void unload_mesh(MeshComponent &mesh_component);
 
-        void begin_frame();
+        void begin_main_pass();
         void draw_mesh(const TransformComponent &transform_component, const MaterialComponent &material_component,
                        const MeshComponent &mesh_component);
-        void finish_frame();
+        void finish_main_pass();
 };
 
 } // namespace reach

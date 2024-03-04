@@ -30,14 +30,14 @@ void update() {
         World::current().emplace<MeshComponent>(triangle_entity, triangle_mesh);
     }
 
-    DeviceManager::get().begin_frame();
+    DeviceManager::get().begin_main_pass();
 
     for (auto [entity, transform, material, mesh] :
          World::current().view<TransformComponent, MaterialComponent, MeshComponent>().each()) {
         DeviceManager::get().draw_mesh(transform, material, mesh);
     }
 
-    DeviceManager::get().finish_frame();
+    DeviceManager::get().finish_main_pass();
 }
 
 } // namespace reach::render_system
