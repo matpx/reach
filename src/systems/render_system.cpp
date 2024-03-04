@@ -25,12 +25,12 @@ void update() {
             .index_data = {2, 1, 0},
         });
 
-        DeviceManager::get().update_mesh(triangle_mesh);
-
         const auto triangle_entity = world.create();
         world.emplace<TransformComponent>(triangle_entity, TransformComponent{});
         world.emplace<MaterialComponent>(triangle_entity, MaterialManager::get().unlit_material);
-        world.emplace<MeshComponent>(triangle_entity, triangle_mesh);
+        if (DeviceManager::get().update_mesh(triangle_mesh)) {
+            world.emplace<MeshComponent>(triangle_entity, triangle_mesh);
+        }
 
         world.current_camera = world.create();
         world.emplace<TransformComponent>(world.current_camera, TransformComponent{.translation = {0.0f, 0.0f, 5.0f}});

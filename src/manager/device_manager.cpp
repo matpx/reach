@@ -29,7 +29,6 @@ DeviceManager::DeviceManager() {
                                         }};
 
     sg_setup(sg_desc{.logger = {.func = sokol_log}, .environment = environment});
-
     POSTCONDITION(sg_isvalid());
 
     self = this;
@@ -42,10 +41,10 @@ DeviceManager::~DeviceManager() {
     sg_shutdown();
 }
 
-void DeviceManager::update_mesh(MeshComponent &mesh_component) {
+bool DeviceManager::update_mesh(MeshComponent &mesh_component) {
     if (!mesh_component.mesh_data) {
         LOG_ERROR("cannot update MeshComponent with empty mesh_data");
-        return;
+        return false;
     }
 
     if (mesh_component.vertex_buffer.id != SG_INVALID_ID || mesh_component.index_buffer.id != SG_INVALID_ID) {
@@ -70,6 +69,8 @@ void DeviceManager::update_mesh(MeshComponent &mesh_component) {
                        }});
 
     mesh_component.index_count = static_cast<uint32_t>(mesh_data->index_data.size());
+
+    return true;
 }
 
 void DeviceManager::unload_mesh(MeshComponent &mesh_component) {
@@ -109,7 +110,7 @@ void DeviceManager::begin_main_pass() {
 
 void DeviceManager::draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,
                               const MeshComponent &mesh_component) {
-    PRECONDITION(pass_is_active);
+    PRECONDITION(pass_is_active == true);
 
     sg_apply_pipeline(material_component.pipeline);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, material_component.uniform_transform_slot, SG_RANGE(model_view_projection));
