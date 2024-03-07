@@ -7,7 +7,9 @@
 
 namespace reach {
 
-void glfw_error_callback([[maybe_unused]] int error, const char *description) { LOG_ERROR(description); }
+void glfw_error_callback([[maybe_unused]] int error, const char *description) {
+    LOG_ERROR(description);
+}
 
 static WindowManager *self = nullptr;
 

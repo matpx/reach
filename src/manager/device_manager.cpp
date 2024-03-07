@@ -10,8 +10,9 @@
 namespace reach {
 
 void sokol_log([[maybe_unused]] const char *tag, [[maybe_unused]] uint32_t log_level,
-               [[maybe_unused]] uint32_t log_item, const char *message, [[maybe_unused]] uint32_t line_nr,
-               [[maybe_unused]] const char *filename, [[maybe_unused]] void *user_data) {
+               [[maybe_unused]] uint32_t log_item, const char *message,
+               [[maybe_unused]] uint32_t line_nr, [[maybe_unused]] const char *filename,
+               [[maybe_unused]] void *user_data) {
     LOG_ERROR(message);
 }
 
@@ -47,7 +48,8 @@ bool DeviceManager::update_mesh(MeshComponent &mesh_component) {
         return false;
     }
 
-    if (mesh_component.vertex_buffer.id != SG_INVALID_ID || mesh_component.index_buffer.id != SG_INVALID_ID) {
+    if (mesh_component.vertex_buffer.id != SG_INVALID_ID ||
+        mesh_component.index_buffer.id != SG_INVALID_ID) {
         unload_mesh(mesh_component);
     }
 
@@ -58,14 +60,16 @@ bool DeviceManager::update_mesh(MeshComponent &mesh_component) {
     mesh_component.vertex_buffer = sg_make_buffer(
         sg_buffer_desc{.data = {
                            .ptr = mesh_data->vertex_data.data(),
-                           .size = mesh_data->vertex_data.size() * sizeof(decltype(mesh_data->vertex_data)::value_type),
+                           .size = mesh_data->vertex_data.size() *
+                                   sizeof(decltype(mesh_data->vertex_data)::value_type),
                        }});
 
     mesh_component.index_buffer = sg_make_buffer(
         sg_buffer_desc{.type = SG_BUFFERTYPE_INDEXBUFFER,
                        .data = {
                            .ptr = mesh_data->index_data.data(),
-                           .size = mesh_data->index_data.size() * sizeof(decltype(mesh_data->index_data)::value_type),
+                           .size = mesh_data->index_data.size() *
+                                   sizeof(decltype(mesh_data->index_data)::value_type),
                        }});
 
     mesh_component.index_count = static_cast<uint32_t>(mesh_data->index_data.size());
@@ -101,19 +105,21 @@ void DeviceManager::begin_main_pass() {
                                         .framebuffer = 0,
                                     }};
 
-    sg_pass_action pass_action = {};
+    const sg_pass_action pass_action = {};
 
     sg_begin_pass(sg_pass{.action = pass_action, .swapchain = swapchain});
 
     pass_is_active = true;
 }
 
-void DeviceManager::draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,
+void DeviceManager::draw_mesh(const glm::mat4 &model_view_projection,
+                              const MaterialComponent &material_component,
                               const MeshComponent &mesh_component) {
     PRECONDITION(pass_is_active == true);
 
     sg_apply_pipeline(material_component.pipeline);
-    sg_apply_uniforms(SG_SHADERSTAGE_VS, material_component.uniform_transform_slot, SG_RANGE(model_view_projection));
+    sg_apply_uniforms(SG_SHADERSTAGE_VS, material_component.uniform_transform_slot,
+                      SG_RANGE(model_view_projection));
     sg_apply_bindings(sg_bindings{
         .vertex_buffers = {mesh_component.vertex_buffer},
         .index_buffer = mesh_component.index_buffer,

@@ -33,8 +33,10 @@ void update() {
         }
 
         world.current_camera = world.create();
-        world.emplace<TransformComponent>(world.current_camera, TransformComponent{.translation = {0.0f, 0.0f, 5.0f}});
-        world.emplace<CameraComponent>(world.current_camera, CameraComponent::make(1.4f, 1.0f, 0.1f, 100.0f));
+        world.emplace<TransformComponent>(world.current_camera,
+                                          TransformComponent{.translation = {0.0f, 0.0f, 5.0f}});
+        world.emplace<CameraComponent>(world.current_camera,
+                                       CameraComponent::make(1.4f, 1.0f, 0.1f, 100.0f));
     }
 }
 

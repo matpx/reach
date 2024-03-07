@@ -13,10 +13,11 @@ void update() {
 
     DeviceManager::get().begin_main_pass();
 
-    const glm::mat4 view_projection = world.current_camera != entt::null
-                                          ? world.get<CameraComponent>(world.current_camera).projection *
-                                                glm::inverse(world.get<TransformComponent>(world.current_camera).model)
-                                          : glm::identity<glm::mat4>();
+    const glm::mat4 view_projection =
+        world.current_camera != entt::null
+            ? world.get<CameraComponent>(world.current_camera).projection *
+                  glm::inverse(world.get<TransformComponent>(world.current_camera).model)
+            : glm::identity<glm::mat4>();
 
     for (auto [entity, transform, material, mesh] :
          world.view<TransformComponent, MaterialComponent, MeshComponent>().each()) {

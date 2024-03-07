@@ -8,11 +8,11 @@
 #include <utils/log.hpp>
 #include <world.hpp>
 
-
 namespace reach {
 
 App::App()
-    : window_manager(std::make_unique<WindowManager>()), device_manager(std::make_unique<DeviceManager>()),
+    : window_manager(std::make_unique<WindowManager>()),
+      device_manager(std::make_unique<DeviceManager>()),
       material_manager(std::make_unique<MaterialManager>()), world(std::make_unique<World>()) {}
 
 void App::run() {

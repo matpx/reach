@@ -23,7 +23,8 @@ class DeviceManager final : public Manager {
         void unload_mesh(MeshComponent &mesh_component);
 
         void begin_main_pass();
-        void draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,
+        void draw_mesh(const glm::mat4 &model_view_projection,
+                       const MaterialComponent &material_component,
                        const MeshComponent &mesh_component);
         void finish_main_pass();
 };
