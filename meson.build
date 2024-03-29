@@ -8,10 +8,15 @@ shdc = find_program('sokol-shdc',
         join_paths(meson.current_source_dir(), 'tools/sokol-tools-bin/bin/linux')],
     required: true)
 
-shader = custom_target('targetname',
-    output : 'unlit.glsl.h',
-    input : 'src/shader/unlit.glsl',
-    command : [shdc, '--slang=glsl330', '--reflection', '--format=sokol', '--input=@INPUT@', '--output=@OUTPUT@'])
+shader_sources = ['unlit']
+shader_targets = []
+
+foreach s : shader_sources
+    shader_targets += custom_target('shader_target_' + s,
+        output : s + '.glsl.h',
+        input : 'src/shader/' + s + '.glsl',
+        command : [shdc, '--slang=glsl330', '--reflection', '--format=sokol', '--input=@INPUT@', '--output=@OUTPUT@'])
+endforeach
 
 # main executable
 
@@ -44,7 +49,7 @@ src = [
 ]
 
 executable('reach',
-    src + shader,
+    src + shader_targets,
     dependencies: deps,
     include_directories: ['src/'],
     override_options : ['cpp_std=c++20', 'cpp_eh=none', 'cpp_rtti=false', 'werror=true', 'warning_level=3'],
