@@ -53,13 +53,13 @@ parse_prim(gsl::not_null<std::shared_ptr<MeshData>> &mesh_data, const cgltf_prim
     const uint32_t base_vertex = static_cast<uint32_t>(mesh_data->vertex_data.size());
 
     for (cgltf_size i_component = 0; i_component < position_attribute.data->count; i_component++) {
-        std::array<float, 3> vertex_position = {};
+        std::array<cgltf_float, 3> vertex_position = {};
 
         if (!cgltf_accessor_read_float(position_attribute.data, i_component, vertex_position.data(), vertex_position.size())) {
             return tl::make_unexpected("cgltf failed to read position component");
         }
 
-        std::array<float, 3> vertex_normal = {};
+        std::array<cgltf_float, 3> vertex_normal = {};
 
         if (!cgltf_accessor_read_float(normal_attribute.data, i_component, vertex_normal.data(), vertex_normal.size())) {
             return tl::make_unexpected("cgltf failed to read position component");
