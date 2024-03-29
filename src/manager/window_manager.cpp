@@ -7,15 +7,13 @@
 
 namespace reach {
 
-void glfw_error_callback([[maybe_unused]] int error, const char *description) {
-    LOG_ERROR(description);
-}
+void glfw_error_callback([[maybe_unused]] int error, const char *description) { LOG_ERROR(description); }
 
 static WindowManager *self = nullptr;
 
 WindowManager &WindowManager::get() { return *self; }
 
-WindowManager::WindowManager() {
+WindowManager::WindowManager(const glm::ivec2 width_height) {
     PRECONDITION(self == nullptr);
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -35,6 +33,8 @@ WindowManager::WindowManager() {
     glfwMakeContextCurrent(glfw_window);
     glfwSwapInterval(1);
 
+    glfwGetFramebufferSize(glfw_window, &framebuffer_width_height.x, &framebuffer_width_height.y);
+
     self = this;
 }
 
@@ -47,9 +47,7 @@ WindowManager::~WindowManager() {
     glfwTerminate();
 }
 
-bool WindowManager::should_close() {
-    return glfwWindowShouldClose(glfw_window) || glfwGetKey(glfw_window, GLFW_KEY_ESCAPE);
-}
+bool WindowManager::should_close() { return glfwWindowShouldClose(glfw_window) || glfwGetKey(glfw_window, GLFW_KEY_ESCAPE); }
 
 void WindowManager::finish_frame() {
     glfwSwapBuffers(glfw_window);

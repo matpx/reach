@@ -90,7 +90,7 @@ void DeviceManager::unload_mesh(MeshComponent &mesh_component) {
 void DeviceManager::begin_main_pass() {
     PRECONDITION(pass_is_active == false);
 
-    const glm::ivec2 width_height = WindowManager::get().get_width_height();
+    const glm::ivec2 width_height = WindowManager::get().get_framebuffer_width_height();
 
     const sg_swapchain swapchain = {.width = width_height.x,
                                     .height = width_height.y,

@@ -12,10 +12,9 @@
 namespace reach {
 
 App::App()
-    : window_manager(std::make_unique<WindowManager>()),
-      device_manager(std::make_unique<DeviceManager>()),
-      material_manager(std::make_unique<MaterialManager>()),
-      model_manager(std::make_unique<ModelManager>()), world(std::make_unique<World>()) {}
+    : window_manager(std::make_unique<WindowManager>(glm::ivec2{1200, 800})), device_manager(std::make_unique<DeviceManager>()),
+      material_manager(std::make_unique<MaterialManager>()), model_manager(std::make_unique<ModelManager>()),
+      world(std::make_unique<World>()) {}
 
 void App::run() {
 #ifndef NDEBUG
