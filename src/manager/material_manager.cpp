@@ -18,6 +18,7 @@ MaterialManager::MaterialManager() {
 
     sg_pipeline_desc unlit_pipeline_desc = {};
     unlit_pipeline_desc.layout.attrs[ATTR_vs_position].format = SG_VERTEXFORMAT_FLOAT3;
+    unlit_pipeline_desc.layout.attrs[ATTR_vs_normal].format = SG_VERTEXFORMAT_FLOAT3;
     unlit_pipeline_desc.shader = unlit_shader;
     unlit_pipeline_desc.index_type = SG_INDEXTYPE_UINT32;
     unlit_pipeline_desc.cull_mode = SG_CULLMODE_BACK;

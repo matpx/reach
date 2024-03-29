@@ -101,7 +101,10 @@ void DeviceManager::begin_main_pass() {
                                         .framebuffer = 0,
                                     }};
 
-    const sg_pass_action pass_action = {};
+    const sg_pass_action pass_action = {.colors = {{
+                                            .load_action = SG_LOADACTION_CLEAR,
+                                            .clear_value = {1, 1, 1, 1},
+                                        }}};
 
     sg_begin_pass(sg_pass{.action = pass_action, .swapchain = swapchain});
 

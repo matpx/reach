@@ -7,7 +7,8 @@
 namespace reach {
 
 struct MeshVertex {
-        std::array<float, 3> pos;
+        std::array<float, 3> position;
+        std::array<float, 3> normal;
 };
 
 using MeshIndex = uint32_t;

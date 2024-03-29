@@ -25,33 +25,49 @@ ModelManager::~ModelManager() {
 
 static tl::expected<std::tuple<MeshComponent, MaterialComponent>, std::string>
 parse_prim(gsl::not_null<std::shared_ptr<MeshData>> &mesh_data, const cgltf_primitive &prim) {
-    cgltf_attribute pos_attribute = {};
+    cgltf_attribute position_attribute = {};
+    cgltf_attribute normal_attribute = {};
 
     for (const cgltf_attribute &attribute : std::span<cgltf_attribute>(prim.attributes, prim.attributes_count)) {
-        if (attribute.type == cgltf_attribute_type_position) {
-            pos_attribute = attribute;
-        }
-
         if (attribute.data->is_sparse) {
             return tl::make_unexpected("cgltf prim contains sparse accessor");
         }
+
+        if (attribute.type == cgltf_attribute_type_position) {
+            position_attribute = attribute;
+        }
+
+        if (attribute.type == cgltf_attribute_type_normal) {
+            normal_attribute = attribute;
+        }
     }
 
-    if (pos_attribute.type != cgltf_attribute_type_position) {
+    if (position_attribute.type != cgltf_attribute_type_position) {
         return tl::make_unexpected("cgltf prim contains no position attribute");
+    }
+
+    if (normal_attribute.type != cgltf_attribute_type_normal) {
+        return tl::make_unexpected("cgltf prim contains no normal attribute");
     }
 
     const uint32_t base_vertex = static_cast<uint32_t>(mesh_data->vertex_data.size());
 
-    for (cgltf_size i_component = 0; i_component < pos_attribute.data->count; i_component++) {
-        std::array<float, 3> vertex_pos = {};
+    for (cgltf_size i_component = 0; i_component < position_attribute.data->count; i_component++) {
+        std::array<float, 3> vertex_position = {};
 
-        if (!cgltf_accessor_read_float(pos_attribute.data, i_component, vertex_pos.data(), vertex_pos.size())) {
+        if (!cgltf_accessor_read_float(position_attribute.data, i_component, vertex_position.data(), vertex_position.size())) {
+            return tl::make_unexpected("cgltf failed to read position component");
+        }
+
+        std::array<float, 3> vertex_normal = {};
+
+        if (!cgltf_accessor_read_float(normal_attribute.data, i_component, vertex_normal.data(), vertex_normal.size())) {
             return tl::make_unexpected("cgltf failed to read position component");
         }
 
         mesh_data->vertex_data.push_back(MeshVertex{
-            .pos = vertex_pos,
+            .position = vertex_position,
+            .normal = vertex_normal,
         });
     }
 
