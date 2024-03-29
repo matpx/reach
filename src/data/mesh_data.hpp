@@ -1,12 +1,13 @@
 #pragma once
 
+#include <array>
 #include <stdint.h>
 #include <vector>
 
 namespace reach {
 
 struct MeshVertex {
-        float pos[3];
+        std::array<float, 3> pos;
 };
 
 using MeshIndex = uint32_t;

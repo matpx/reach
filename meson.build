@@ -24,11 +24,13 @@ cmake = import('cmake')
 
 deps = [
     cmake.subproject('expected').dependency('expected'),
+    cmake.subproject('GSL').dependency('GSL'),
     cmake.subproject('spdlog').dependency('spdlog'),
     cmake.subproject('glm').dependency('glm'),
     cmake.subproject('glfw').dependency('glfw'),
     cmake.subproject('entt').dependency('EnTT'),
-    subproject('sokol').get_variable('sokol_dep')
+    subproject('sokol').get_variable('sokol_dep'),
+    subproject('cgltf').get_variable('cgltf_dep')
 ]
 
 if build_machine.system() == 'linux'
@@ -37,12 +39,13 @@ endif
 
 src = [
     'src/main.cpp',
-    'src/impl.c',
+    'src/impl.cpp',
     'src/app.cpp',
     'src/world.cpp',
     'src/manager/window_manager.cpp',
     'src/manager/device_manager.cpp',
     'src/manager/material_manager.cpp',
+    'src/manager/model_manager.cpp',
     'src/systems/transform_system.cpp',
     'src/systems/render_system.cpp',
     'src/systems/player_system.cpp'
