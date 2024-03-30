@@ -17,11 +17,11 @@ void update() {
 
     if (world.current_camera != entt::null) {
         view_projection = world.get<CameraComponent>(world.current_camera).projection *
-                          glm::inverse(world.get<TransformComponent>(world.current_camera).model);
+                          glm::inverse(world.get<TransformComponent>(world.current_camera).world);
     }
 
     for (auto [entity, transform, material, mesh] : world.view<TransformComponent, MaterialComponent, MeshComponent>().each()) {
-        const glm::mat4 model_view_projection = view_projection * transform.model;
+        const glm::mat4 model_view_projection = view_projection * transform.world;
 
         if (!mesh.visible) {
             continue;

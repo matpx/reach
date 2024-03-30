@@ -164,10 +164,13 @@ tl::expected<std::shared_ptr<Prefab>, std::string> ModelManager::load_gltf(const
 entt::entity ModelManager::instantiate(World &world, const std::shared_ptr<Prefab> prefab) {
     entt::entity root = world.create();
 
+    world.emplace<TransformComponent>(root, TransformComponent{});
+
     for (Prefab::Node &node : prefab->nodes) {
         const entt::entity node_entity = world.create();
 
         world.emplace<TransformComponent>(node_entity, node.transform);
+        world.emplace<TransformParent>(node_entity, TransformParent{.id = root});
 
         if (node.mesh.has_value()) {
             world.emplace<MeshComponent>(node_entity, node.mesh.value());

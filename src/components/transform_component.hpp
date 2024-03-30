@@ -1,6 +1,6 @@
 #pragma once
 
-#include <entt/fwd.hpp>
+#include <entt/entity/entity.hpp>
 #include <gtc/quaternion.hpp>
 #include <gtx/quaternion.hpp>
 #include <mat4x4.hpp>
@@ -8,10 +8,13 @@
 
 namespace reach {
 
-struct TransformComponent {
-        entt::entity parent;
+struct TransformParent {
+        entt::entity id;
+};
 
-        glm::mat4 model;
+struct TransformComponent {
+        glm::mat4 model = glm::identity<glm::mat4>();
+        glm::mat4 world = glm::identity<glm::mat4>();
 
         glm::vec3 translation = glm::zero<glm::vec3>();
         glm::quat rotation = glm::identity<glm::quat>();
