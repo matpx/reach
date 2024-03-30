@@ -5,6 +5,7 @@
 
 namespace reach {
 
+struct MeshData;
 struct MeshComponent;
 struct MaterialComponent;
 struct TransformComponent;
@@ -19,12 +20,11 @@ class DeviceManager final : public Manager {
         DeviceManager();
         ~DeviceManager();
 
-        [[nodiscard]] bool update_mesh(MeshComponent &mesh_component);
-        void unload_mesh(MeshComponent &mesh_component);
+        void upload_meshdata(MeshData &mesh_data);
+        void unload_meshdata(MeshData &mesh_data);
 
         void begin_main_pass();
-        void draw_mesh(const glm::mat4 &model_view_projection,
-                       const MaterialComponent &material_component,
+        void draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,
                        const MeshComponent &mesh_component);
         void finish_main_pass();
 };

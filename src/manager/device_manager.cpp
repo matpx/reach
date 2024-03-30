@@ -41,49 +41,38 @@ DeviceManager::~DeviceManager() {
     sg_shutdown();
 }
 
-bool DeviceManager::update_mesh(MeshComponent &mesh_component) {
-    if (!mesh_component.mesh_data) {
-        LOG_ERROR("cannot update MeshComponent with empty mesh_data");
-        return false;
+void DeviceManager::upload_meshdata(MeshData &mesh_data) {
+    if (mesh_data.vertex_buffer.id != SG_INVALID_ID || mesh_data.index_buffer.id != SG_INVALID_ID) {
+        unload_meshdata(mesh_data);
     }
 
-    if (mesh_component.vertex_buffer.id != SG_INVALID_ID || mesh_component.index_buffer.id != SG_INVALID_ID) {
-        unload_mesh(mesh_component);
-    }
+    LOG_DEBUG("updating mesh_data: {}", mesh_data.debug_name);
 
-    LOG_DEBUG("updating mesh: {}", mesh_component.debug_name);
-
-    const auto &mesh_data = mesh_component.mesh_data;
-
-    mesh_component.vertex_buffer =
+    mesh_data.vertex_buffer =
         sg_make_buffer(sg_buffer_desc{.data = {
-                                          .ptr = mesh_data->vertex_data.data(),
-                                          .size = mesh_data->vertex_data.size() * sizeof(decltype(mesh_data->vertex_data)::value_type),
+                                          .ptr = mesh_data.vertex_data.data(),
+                                          .size = mesh_data.vertex_data.size() * sizeof(decltype(mesh_data.vertex_data)::value_type),
                                       }});
 
-    mesh_component.index_buffer =
+    mesh_data.index_buffer =
         sg_make_buffer(sg_buffer_desc{.type = SG_BUFFERTYPE_INDEXBUFFER,
                                       .data = {
-                                          .ptr = mesh_data->index_data.data(),
-                                          .size = mesh_data->index_data.size() * sizeof(decltype(mesh_data->index_data)::value_type),
+                                          .ptr = mesh_data.index_data.data(),
+                                          .size = mesh_data.index_data.size() * sizeof(decltype(mesh_data.index_data)::value_type),
                                       }});
-
-    mesh_component.index_count = static_cast<uint32_t>(mesh_data->index_data.size());
-
-    return true;
 }
 
-void DeviceManager::unload_mesh(MeshComponent &mesh_component) {
-    LOG_DEBUG("unloading mesh: {}", mesh_component.debug_name);
+void DeviceManager::unload_meshdata(MeshData &mesh_data) {
+    LOG_DEBUG("unloading mesh_data: {}", mesh_data.debug_name);
 
-    if (mesh_component.vertex_buffer.id != SG_INVALID_ID) {
-        sg_destroy_buffer(mesh_component.vertex_buffer);
-        mesh_component.vertex_buffer = {};
+    if (mesh_data.vertex_buffer.id != SG_INVALID_ID) {
+        sg_destroy_buffer(mesh_data.vertex_buffer);
+        mesh_data.vertex_buffer = {};
     }
 
-    if (mesh_component.index_buffer.id != SG_INVALID_ID) {
-        sg_destroy_buffer(mesh_component.index_buffer);
-        mesh_component.index_buffer = {};
+    if (mesh_data.index_buffer.id != SG_INVALID_ID) {
+        sg_destroy_buffer(mesh_data.index_buffer);
+        mesh_data.index_buffer = {};
     }
 }
 
@@ -118,8 +107,8 @@ void DeviceManager::draw_mesh(const glm::mat4 &model_view_projection, const Mate
     sg_apply_pipeline(material_component.pipeline);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, material_component.uniform_transform_slot, SG_RANGE(model_view_projection));
     sg_apply_bindings(sg_bindings{
-        .vertex_buffers = {mesh_component.vertex_buffer},
-        .index_buffer = mesh_component.index_buffer,
+        .vertex_buffers = {mesh_component.mesh_data->vertex_buffer},
+        .index_buffer = mesh_component.mesh_data->index_buffer,
     });
     sg_draw(mesh_component.index_offset, mesh_component.index_count, 1);
 }

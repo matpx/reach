@@ -31,10 +31,8 @@ void update() {
             material = MaterialManager::get().unlit_material;
         }
 
-        if (mesh.vertex_buffer.id == SG_INVALID_ID || mesh.index_buffer.id == SG_INVALID_ID) {
-            if (!DeviceManager::get().update_mesh(mesh)) {
-                mesh.visible = false;
-            }
+        if (!mesh.mesh_data->is_uploaded()) {
+            DeviceManager::get().upload_meshdata(*mesh.mesh_data);
         }
 
         DeviceManager::get().draw_mesh(model_view_projection, material, mesh);
