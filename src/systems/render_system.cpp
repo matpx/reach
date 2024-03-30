@@ -17,7 +17,7 @@ void post_update() {
     glm::mat4 view_projection = glm::identity<glm::mat4>();
 
     if (world.current_camera != entt::null) {
-        view_projection = world.get<CameraComponent>(world.current_camera).projection *
+        view_projection = world.get<CameraComponent>(world.current_camera).perspective_proj *
                           glm::inverse(world.get<TransformComponent>(world.current_camera).world);
     }
 
@@ -39,7 +39,7 @@ void post_update() {
         DeviceManager::get().draw_mesh(model_view_projection, material, mesh);
     }
 
-    UiManager::get().submit_data();
+    UiManager::get().submit_to_device();
 
     DeviceManager::get().finish_main_pass();
 }

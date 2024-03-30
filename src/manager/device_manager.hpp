@@ -17,6 +17,7 @@ class DeviceManager final : public Manager {
     private:
         bool pass_is_active = false;
 
+        sg_buffer_desc immediate_buffer_desc = {};
         sg_buffer immediate_buffer = {};
 
     public:
@@ -31,7 +32,7 @@ class DeviceManager final : public Manager {
         void begin_main_pass();
         void draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,
                        const MeshComponent &mesh_component);
-        void draw_immediate(const glm::mat4 &projection, const std::span<const BasicVertex> vertex_data,
+        void draw_immediate(const glm::mat4 &projection, const std::span<const VertexWithPosition> vertex_data,
                             const MaterialComponent &material_component);
         void finish_main_pass();
 };
