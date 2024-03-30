@@ -9,7 +9,7 @@ namespace reach {
 
 class UiManager final : public Manager {
     private:
-        std::vector<VertexWithPosition> vertex_data;
+        std::vector<Vertex2D> immediate_data;
 
         MaterialComponent immediate_material = {};
 
@@ -20,13 +20,12 @@ class UiManager final : public Manager {
         ~UiManager();
 
         constexpr void draw_rect(const glm::vec2 &min, const glm::vec2 &max) {
-            vertex_data.push_back(VertexWithPosition{.position = {max.x, min.y, 0}});
-            vertex_data.push_back(VertexWithPosition{.position = {min.x, min.y, 0}});
-            vertex_data.push_back(VertexWithPosition{.position = {min.x, max.y, 0}});
+            const std::array<Vertex2D, 6> rect = {
+                Vertex2D{{max.x, min.y}}, Vertex2D{{min.x, min.y}}, Vertex2D{{min.x, max.y}},
+                Vertex2D{{max.x, min.y}}, Vertex2D{{min.x, max.y}}, Vertex2D{{max.x, max.y}},
+            };
 
-            vertex_data.push_back(VertexWithPosition{.position = {max.x, min.y, 0}});
-            vertex_data.push_back(VertexWithPosition{.position = {min.x, max.y, 0}});
-            vertex_data.push_back(VertexWithPosition{.position = {max.x, max.y, 0}});
+            immediate_data.insert(immediate_data.end(), std::begin(rect), std::end(rect));
         }
 
         void submit_to_device();

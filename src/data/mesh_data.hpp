@@ -8,11 +8,11 @@
 
 namespace reach {
 
-struct VertexWithPosition {
-        std::array<float, 3> position;
+struct Vertex2D {
+        std::array<float, 2> position;
 };
 
-struct VertexWithPositionNormal {
+struct Vertex3D {
         std::array<float, 3> position;
         std::array<float, 3> normal;
 };
@@ -22,7 +22,7 @@ using MeshIndex = uint32_t;
 struct MeshData {
         std::string_view debug_name = "<unnamed MeshData>";
 
-        std::vector<VertexWithPositionNormal> vertex_data;
+        std::vector<Vertex3D> vertex_data;
         std::vector<MeshIndex> index_data;
 
         sg_buffer vertex_buffer = {};

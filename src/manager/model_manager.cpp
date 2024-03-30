@@ -69,7 +69,7 @@ parse_prim(gsl::not_null<std::shared_ptr<MeshData>> &mesh_data, const cgltf_prim
             return tl::make_unexpected("cgltf failed to read position component");
         }
 
-        mesh_data->vertex_data.push_back(VertexWithPositionNormal{
+        mesh_data->vertex_data.push_back(Vertex3D{
             .position = vertex_position,
             .normal = vertex_normal,
         });

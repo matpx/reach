@@ -32,7 +32,7 @@ class DeviceManager final : public Manager {
         void begin_main_pass();
         void draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,
                        const MeshComponent &mesh_component);
-        void draw_immediate(const glm::mat4 &projection, const std::span<const VertexWithPosition> vertex_data,
+        void draw_immediate(const glm::mat4 &projection, const std::span<const Vertex2D> vertex_data,
                             const MaterialComponent &material_component);
         void finish_main_pass();
 };

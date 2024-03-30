@@ -22,7 +22,7 @@ UiManager::UiManager() {
         POSTCONDITION(immediate_shader.id != SG_INVALID_ID);
 
         sg_pipeline_desc immediate_pipeline_desc = {};
-        immediate_pipeline_desc.layout.attrs[ATTR_immediate_vs_position].format = SG_VERTEXFORMAT_FLOAT3;
+        immediate_pipeline_desc.layout.attrs[ATTR_immediate_vs_position].format = SG_VERTEXFORMAT_FLOAT2;
         immediate_pipeline_desc.shader = immediate_shader;
         immediate_pipeline_desc.index_type = SG_INDEXTYPE_NONE;
         immediate_pipeline_desc.cull_mode = SG_CULLMODE_NONE;
@@ -46,15 +46,15 @@ UiManager::~UiManager() {
 }
 
 void UiManager::submit_to_device() {
-    if (vertex_data.size() == 0) {
+    if (immediate_data.size() == 0) {
         return;
     }
 
     const auto &world = World::current();
 
-    DeviceManager::get().draw_immediate(world.get<CameraComponent>(world.current_camera).ui_proj, vertex_data, immediate_material);
+    DeviceManager::get().draw_immediate(world.get<CameraComponent>(world.current_camera).ui_proj, immediate_data, immediate_material);
 
-    vertex_data.resize(0);
+    immediate_data.resize(0);
 }
 
 } // namespace reach

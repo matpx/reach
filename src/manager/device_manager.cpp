@@ -114,7 +114,7 @@ void DeviceManager::draw_mesh(const glm::mat4 &model_view_projection, const Mate
     sg_draw(mesh_component.index_offset, mesh_component.index_count, 1);
 }
 
-void DeviceManager::draw_immediate(const glm::mat4 &projection, const std::span<const VertexWithPosition> vertex_data,
+void DeviceManager::draw_immediate(const glm::mat4 &projection, const std::span<const Vertex2D> vertex_data,
                                    const MaterialComponent &material_component) {
     const std::size_t required_byte_size = vertex_data.size() * sizeof(decltype(vertex_data)::value_type);
 
