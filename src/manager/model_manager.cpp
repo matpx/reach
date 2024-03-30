@@ -2,8 +2,8 @@
 #include <gsl/pointers>
 #include <gsl/util>
 #include <manager/model_manager.hpp>
-#include <span>
 #include <utils/conditions.hpp>
+#include <data/prefab.hpp>
 #include <world.hpp>
 
 namespace reach {

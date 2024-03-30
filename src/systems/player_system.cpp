@@ -1,7 +1,5 @@
 #include <components/camera_component.hpp>
-#include <components/mesh_component.hpp>
 #include <components/transform_component.hpp>
-#include <manager/material_manager.hpp>
 #include <manager/model_manager.hpp>
 #include <manager/window_manager.hpp>
 #include <systems/player_system.hpp>

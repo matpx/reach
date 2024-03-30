@@ -1,7 +1,6 @@
 #pragma once
 
 #include <manager/manager.hpp>
-#include <utility>
 #include <vec2.hpp>
 
 struct GLFWwindow;

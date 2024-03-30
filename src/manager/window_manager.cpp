@@ -1,6 +1,5 @@
 #include <manager/window_manager.hpp>
 #include <utils/conditions.hpp>
-#include <utils/panic.hpp>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>

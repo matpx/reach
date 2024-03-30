@@ -1,26 +1,15 @@
 #pragma once
 
-#include <components/material_component.hpp>
-#include <components/mesh_component.hpp>
-#include <components/transform_component.hpp>
 #include <manager/manager.hpp>
-#include <optional>
+#include <memory>
+#include <string_view>
 #include <tl/expected.hpp>
 
 
 namespace reach {
 
 class World;
-
-struct Prefab {
-        struct Node {
-                std::optional<MeshComponent> mesh;
-                std::optional<MaterialComponent> material;
-                TransformComponent transform;
-        };
-
-        std::vector<Node> nodes;
-};
+struct Prefab;
 
 class ModelManager final : public Manager {
     public:
