@@ -22,6 +22,7 @@ MaterialManager::MaterialManager() {
     unlit_pipeline_desc.shader = unlit_shader;
     unlit_pipeline_desc.index_type = SG_INDEXTYPE_UINT32;
     unlit_pipeline_desc.cull_mode = SG_CULLMODE_BACK;
+    unlit_pipeline_desc.face_winding = SG_FACEWINDING_CCW;
     unlit_pipeline_desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
     unlit_pipeline_desc.depth.write_enabled = true;
     unlit_pipeline_desc.label = "unlit pipeline";

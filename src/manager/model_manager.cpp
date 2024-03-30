@@ -125,21 +125,23 @@ tl::expected<std::shared_ptr<Prefab>, std::string> ModelManager::load_gltf(const
     auto _ = gsl::finally([&data] { cgltf_free(data); });
 
     if (cgltf_parse_file(&options, path.data(), &data) != cgltf_result_success) {
-        return tl::make_unexpected("gltf parse error");
+        return tl::make_unexpected("cgltf failed to load or parse file");
     }
 
     if (cgltf_load_buffers(&options, data, path.data()) != cgltf_result_success) {
-        return tl::make_unexpected("gltf load buffers error");
+        return tl::make_unexpected("cgltf failed to load buffer");
     }
 
     if (cgltf_validate(data) != cgltf_result_success) {
-        return tl::make_unexpected("gltf validate error");
+        return tl::make_unexpected("cgltf failed to validate");
     }
 
     gsl::not_null<std::shared_ptr<MeshData>> mesh_data = std::make_shared<MeshData>();
     std::unordered_map<std::uintptr_t, std::tuple<MeshComponent, MaterialComponent>> mesh_components;
 
     for (const cgltf_mesh &mesh : std::span<cgltf_mesh>(data->meshes, data->meshes_count)) {
+        LOG_DEBUG("cgltf parse mesh: {}", mesh.name);
+
         for (const cgltf_primitive &prim : std::span<cgltf_primitive>(mesh.primitives, mesh.primitives_count)) {
             auto prim_result = parse_prim(mesh_data, prim);
             if (!prim_result) {
@@ -159,7 +161,9 @@ tl::expected<std::shared_ptr<Prefab>, std::string> ModelManager::load_gltf(const
     return prefab;
 }
 
-void ModelManager::instantiate(World &world, const std::shared_ptr<Prefab> prefab) {
+entt::entity ModelManager::instantiate(World &world, const std::shared_ptr<Prefab> prefab) {
+    entt::entity root = world.create();
+
     for (Prefab::Node &node : prefab->nodes) {
         const entt::entity node_entity = world.create();
 
@@ -173,6 +177,8 @@ void ModelManager::instantiate(World &world, const std::shared_ptr<Prefab> prefa
             world.emplace<MaterialComponent>(node_entity, node.material.value());
         }
     }
+
+    return root;
 }
 
 } // namespace reach
