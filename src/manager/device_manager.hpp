@@ -1,7 +1,10 @@
 #pragma once
 
+#include <data/mesh_data.hpp>
 #include <manager/manager.hpp>
 #include <mat4x4.hpp>
+#include <sokol_gfx.h>
+#include <span>
 
 namespace reach {
 
@@ -13,6 +16,8 @@ struct TransformComponent;
 class DeviceManager final : public Manager {
     private:
         bool pass_is_active = false;
+
+        sg_buffer immediate_buffer = {};
 
     public:
         [[nodiscard]] static DeviceManager &get();
@@ -26,6 +31,8 @@ class DeviceManager final : public Manager {
         void begin_main_pass();
         void draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,
                        const MeshComponent &mesh_component);
+        void draw_immediate(const glm::mat4 &projection, const std::span<const BasicVertex> vertex_data,
+                            const MaterialComponent &material_component);
         void finish_main_pass();
 };
 

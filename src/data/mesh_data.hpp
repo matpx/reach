@@ -13,6 +13,10 @@ struct MeshVertex {
         std::array<float, 3> normal;
 };
 
+struct BasicVertex {
+        std::array<float, 3> position;
+};
+
 using MeshIndex = uint32_t;
 
 struct MeshData {
@@ -24,7 +28,7 @@ struct MeshData {
         sg_buffer vertex_buffer = {.id = SG_INVALID_ID};
         sg_buffer index_buffer = {.id = SG_INVALID_ID};
 
-        [[nodiscard]] constexpr bool is_uploaded() { return vertex_buffer.id != SG_INVALID_ID && index_buffer.id != SG_INVALID_ID; }
+        [[nodiscard]] constexpr bool is_uploaded() { return vertex_buffer.id != SG_INVALID_ID; }
 };
 
 } // namespace reach

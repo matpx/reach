@@ -13,6 +13,7 @@ class MaterialManager final : public Manager {
         ~MaterialManager();
 
         MaterialComponent unlit_material = {};
+        MaterialComponent immediate_material = {};
 };
 
 } // namespace reach

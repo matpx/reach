@@ -2,6 +2,6 @@
 
 namespace reach::render_system {
 
-void update();
+void post_update();
 
 }

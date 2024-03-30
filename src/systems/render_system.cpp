@@ -3,12 +3,13 @@
 #include <components/transform_component.hpp>
 #include <manager/device_manager.hpp>
 #include <manager/material_manager.hpp>
+#include <manager/ui_manager.hpp>
 #include <systems/render_system.hpp>
 #include <world.hpp>
 
 namespace reach::render_system {
 
-void update() {
+void post_update() {
     auto &world = World::current();
 
     DeviceManager::get().begin_main_pass();
@@ -37,6 +38,8 @@ void update() {
 
         DeviceManager::get().draw_mesh(model_view_projection, material, mesh);
     }
+
+    UiManager::get().submit_data();
 
     DeviceManager::get().finish_main_pass();
 }

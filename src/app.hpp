@@ -9,6 +9,7 @@ class WindowManager;
 class DeviceManager;
 class MaterialManager;
 class ModelManager;
+class UiManager;
 class World;
 
 class App : NoCopy {
@@ -17,6 +18,7 @@ class App : NoCopy {
         std::unique_ptr<DeviceManager> device_manager;
         std::unique_ptr<MaterialManager> material_manager;
         std::unique_ptr<ModelManager> model_manager;
+        std::unique_ptr<UiManager> ui_manager;
         std::unique_ptr<World> world;
 
     public:

@@ -8,7 +8,7 @@ shdc = find_program('sokol-shdc',
         join_paths(meson.current_source_dir(), 'tools/sokol-tools-bin/bin/linux')],
     required: true)
 
-shader_sources = ['unlit']
+shader_sources = ['unlit', 'immediate']
 shader_targets = []
 
 foreach s : shader_sources
@@ -46,6 +46,7 @@ src = [
     'src/manager/device_manager.cpp',
     'src/manager/material_manager.cpp',
     'src/manager/model_manager.cpp',
+    'src/manager/ui_manager.cpp',
     'src/systems/transform_system.cpp',
     'src/systems/render_system.cpp',
     'src/systems/player_system.cpp'

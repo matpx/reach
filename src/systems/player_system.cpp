@@ -1,6 +1,7 @@
 #include <components/camera_component.hpp>
 #include <components/transform_component.hpp>
 #include <manager/model_manager.hpp>
+#include <manager/ui_manager.hpp>
 #include <manager/window_manager.hpp>
 #include <systems/player_system.hpp>
 #include <utils/log.hpp>
@@ -30,7 +31,7 @@ void update() {
         world.emplace<TransformComponent>(world.current_camera, TransformComponent{});
 
         world.emplace<CameraComponent>(world.current_camera,
-                                       CameraComponent::make(1.4f, WindowManager::get().get_framebuffer_aspect(), 0.1f, 100.0f));
+                                       CameraComponent::make(1.4f, WindowManager::get().get_framebuffer_width_height(), 0.1f, 100.0f));
     }
 
     auto &camera_transform = world.get<TransformComponent>(World::current().current_camera);
@@ -42,6 +43,8 @@ void update() {
     camera_transform.rotation = glm::quatLookAt(glm::normalize(-camera_transform.translation), glm::vec3{0, 1, 0});
 
     World::current().get<TransformComponent>(player).translation.y = sin(c) * 2;
+
+    UiManager::get().draw_rect(glm::vec2{0, 0}, glm::vec2{200, 200});
 }
 
 } // namespace reach::player_system

@@ -1,3 +1,4 @@
+#include <data/mesh_data.hpp>
 #include <components/material_component.hpp>
 #include <components/mesh_component.hpp>
 #include <components/transform_component.hpp>
@@ -111,6 +112,27 @@ void DeviceManager::draw_mesh(const glm::mat4 &model_view_projection, const Mate
         .index_buffer = mesh_component.mesh_data->index_buffer,
     });
     sg_draw(mesh_component.index_offset, mesh_component.index_count, 1);
+}
+
+void DeviceManager::draw_immediate(const glm::mat4 &projection, const std::span<const BasicVertex> vertex_data,
+                                   const MaterialComponent &material_component) {
+    if (immediate_buffer.id != SG_INVALID_ID) {
+        sg_destroy_buffer(immediate_buffer);
+    }
+
+    immediate_buffer = sg_make_buffer(sg_buffer_desc{.data = {
+                                                         .ptr = vertex_data.data(),
+                                                         .size = vertex_data.size() * sizeof(decltype(vertex_data)::value_type),
+                                                     }});
+
+    sg_apply_pipeline(material_component.pipeline);
+    sg_apply_uniforms(SG_SHADERSTAGE_VS, material_component.uniform_transform_slot, SG_RANGE(projection));
+    sg_apply_bindings(sg_bindings{
+        .vertex_buffers = {immediate_buffer},
+    });
+
+    sg_draw(0, vertex_data.size(), 1);
+
 }
 
 void DeviceManager::finish_main_pass() {
