@@ -1,9 +1,9 @@
 #include <cgltf.h>
+#include <data/prefab.hpp>
 #include <gsl/pointers>
 #include <gsl/util>
 #include <manager/model_manager.hpp>
 #include <utils/conditions.hpp>
-#include <data/prefab.hpp>
 #include <world.hpp>
 
 namespace reach {
@@ -25,6 +25,10 @@ ModelManager::~ModelManager() {
 
 static tl::expected<std::tuple<MeshComponent, MaterialComponent>, std::string>
 parse_prim(gsl::not_null<std::shared_ptr<MeshData>> &mesh_data, const cgltf_primitive &prim) {
+    if (prim.indices->is_sparse) {
+        return tl::make_unexpected("cgltf prim contains sparse index accessor");
+    }
+
     cgltf_attribute position_attribute = {};
     cgltf_attribute normal_attribute = {};
 
@@ -69,10 +73,6 @@ parse_prim(gsl::not_null<std::shared_ptr<MeshData>> &mesh_data, const cgltf_prim
             .position = vertex_position,
             .normal = vertex_normal,
         });
-    }
-
-    if (prim.indices->is_sparse) {
-        return tl::make_unexpected("cgltf prim contains sparse index accessor");
     }
 
     MeshComponent mesh_component = {
