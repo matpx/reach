@@ -1,5 +1,6 @@
 #include <app.hpp>
 #include <manager/device_manager.hpp>
+#include <manager/input_manager.hpp>
 #include <manager/material_manager.hpp>
 #include <manager/model_manager.hpp>
 #include <manager/ui_manager.hpp>
@@ -13,9 +14,9 @@
 namespace reach {
 
 App::App()
-    : window_manager(std::make_unique<WindowManager>(glm::ivec2{1600, 1000})), device_manager(std::make_unique<DeviceManager>()),
-      material_manager(std::make_unique<MaterialManager>()), model_manager(std::make_unique<ModelManager>()),
-      ui_manager(std::make_unique<UiManager>()), world(std::make_unique<World>()) {}
+    : window_manager(std::make_unique<WindowManager>(glm::ivec2{1600, 1000})), input_manager(std::make_unique<InputManager>()),
+      device_manager(std::make_unique<DeviceManager>()), material_manager(std::make_unique<MaterialManager>()),
+      model_manager(std::make_unique<ModelManager>()), ui_manager(std::make_unique<UiManager>()), world(std::make_unique<World>()) {}
 
 void App::run() {
 #ifndef NDEBUG

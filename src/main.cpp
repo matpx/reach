@@ -1,9 +1,10 @@
 #include <app.hpp>
 #include <manager/device_manager.hpp>
+#include <manager/input_manager.hpp>
 #include <manager/material_manager.hpp>
 #include <manager/model_manager.hpp>
-#include <manager/window_manager.hpp>
 #include <manager/ui_manager.hpp>
+#include <manager/window_manager.hpp>
 #include <world.hpp>
 
 using namespace reach;
