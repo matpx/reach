@@ -161,12 +161,12 @@ tl::expected<std::shared_ptr<Prefab>, std::string> ModelManager::load_gltf(const
     return prefab;
 }
 
-entt::entity ModelManager::instantiate(World &world, const std::shared_ptr<Prefab> prefab) {
-    entt::entity root = world.create();
+void ModelManager::instantiate(World &world, const entt::entity root, const Prefab &prefab) {
+    PRECONDITION(root != entt::null);
 
     world.emplace<TransformComponent>(root, TransformComponent{});
 
-    for (Prefab::Node &node : prefab->nodes) {
+    for (const Prefab::Node &node : prefab.nodes) {
         const entt::entity node_entity = world.create();
 
         world.emplace<TransformComponent>(node_entity, node.transform);
@@ -180,8 +180,6 @@ entt::entity ModelManager::instantiate(World &world, const std::shared_ptr<Prefa
             world.emplace<MaterialComponent>(node_entity, node.material.value());
         }
     }
-
-    return root;
 }
 
 } // namespace reach

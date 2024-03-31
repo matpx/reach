@@ -13,8 +13,9 @@ namespace reach::player_system {
 void update() {
     auto &world = World::current();
 
+    const static entt::entity player = World::current().create();
+
     static bool first_run = true;
-    static entt::entity player = entt::null;
 
     if (first_run) {
         first_run = false;
@@ -22,7 +23,7 @@ void update() {
         ModelManager::get()
             .load_gltf("assets/glb/challenger.glb")
             .and_then([](std::shared_ptr<Prefab> prefab) -> tl::expected<std::shared_ptr<Prefab>, std::string> {
-                player = ModelManager::get().instantiate(World::current(), prefab);
+                ModelManager::get().instantiate(World::current(), player, *prefab);
 
                 return prefab;
             })

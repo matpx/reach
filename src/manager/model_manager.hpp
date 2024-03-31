@@ -1,7 +1,7 @@
 #pragma once
 
-#include <manager/manager.hpp>
 #include <entt/fwd.hpp>
+#include <manager/manager.hpp>
 #include <memory>
 #include <string_view>
 #include <tl/expected.hpp>
@@ -20,7 +20,7 @@ class ModelManager final : public Manager {
 
         [[nodiscard]] tl::expected<std::shared_ptr<Prefab>, std::string> load_gltf(const std::string_view path);
 
-        [[nodiscard]] entt::entity instantiate(World &world, const std::shared_ptr<Prefab> prefab);
+        void instantiate(World &world, const entt::entity root, const Prefab &prefab);
 };
 
 } // namespace reach
