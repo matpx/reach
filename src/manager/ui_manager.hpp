@@ -29,9 +29,8 @@ class UiManager final : public Manager {
             immediate_data.insert(immediate_data.end(), std::begin(rect), std::end(rect));
         }
 
-        constexpr void draw_circle(const glm::vec2 &center, float radius) {
-            constexpr int32_t segment_count = 32;
-            constexpr float segment_radius = 1.0f / segment_count * 2.0f * glm::pi<float>();
+        constexpr void draw_circle(const glm::vec2 &center, const float radius, const int32_t segment_count = 32) {
+            const float segment_radius = 1.0f / segment_count * 2.0f * glm::pi<float>();
 
             float corner_a = 0.0f;
 
