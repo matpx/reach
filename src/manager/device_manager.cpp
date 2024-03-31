@@ -145,7 +145,7 @@ void DeviceManager::draw_immediate(const glm::mat4 &projection, const std::span<
         .vertex_buffers = {immediate_buffer},
     });
 
-    sg_draw(0, vertex_data.size(), 1);
+    sg_draw(0, static_cast<int32_t>(vertex_data.size()), 1);
 }
 
 void DeviceManager::finish_main_pass() {
