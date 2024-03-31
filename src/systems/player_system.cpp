@@ -45,6 +45,7 @@ void update() {
     World::current().get<TransformComponent>(player).translation.y = sin(c) * 2;
 
     UiManager::get().draw_rect(glm::vec2{0, 0}, glm::vec2{200, 200});
+    UiManager::get().draw_circle(glm::vec2{500, 500}, 100);
 }
 
 } // namespace reach::player_system

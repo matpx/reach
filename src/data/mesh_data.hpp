@@ -4,12 +4,15 @@
 #include <sokol_gfx.h>
 #include <stdint.h>
 #include <string_view>
+#include <vec2.hpp>
 #include <vector>
 
 namespace reach {
 
 struct Vertex2D {
         std::array<float, 2> position;
+
+        constexpr static Vertex2D from(const glm::vec2 &position_vec) { return {.position = {position_vec.x, position_vec.y}}; }
 };
 
 struct Vertex3D {
