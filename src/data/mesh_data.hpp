@@ -5,14 +5,21 @@
 #include <stdint.h>
 #include <string_view>
 #include <vec2.hpp>
+#include <vec4.hpp>
 #include <vector>
 
 namespace reach {
 
 struct Vertex2D {
         std::array<float, 2> position;
+        std::array<float, 4> color;
 
-        constexpr static Vertex2D from(const glm::vec2 &position_vec) { return {.position = {position_vec.x, position_vec.y}}; }
+        constexpr static Vertex2D from(const glm::vec2 &position_vec, const glm::vec4 &color_vec) {
+            return {
+                .position = {position_vec.x, position_vec.y},
+                .color = {color_vec.x, color_vec.y, color_vec.z, color_vec.w},
+            };
+        }
 };
 
 struct Vertex3D {

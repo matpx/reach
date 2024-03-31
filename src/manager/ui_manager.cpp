@@ -23,6 +23,7 @@ UiManager::UiManager() {
 
         sg_pipeline_desc immediate_pipeline_desc = {};
         immediate_pipeline_desc.layout.attrs[ATTR_immediate_vs_position].format = SG_VERTEXFORMAT_FLOAT2;
+        immediate_pipeline_desc.layout.attrs[ATTR_immediate_vs_color].format = SG_VERTEXFORMAT_FLOAT4;
         immediate_pipeline_desc.shader = immediate_shader;
         immediate_pipeline_desc.index_type = SG_INDEXTYPE_NONE;
         immediate_pipeline_desc.cull_mode = SG_CULLMODE_NONE;

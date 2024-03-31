@@ -20,28 +20,29 @@ class UiManager final : public Manager {
         UiManager();
         ~UiManager();
 
-        constexpr void draw_rect(const glm::vec2 &min, const glm::vec2 &max) {
+        constexpr void draw_rect(const glm::vec2 &min, const glm::vec2 &max, const glm::vec4 &color = {0, 0, 0, 1}) {
             const std::array<Vertex2D, 6> rect = {
-                Vertex2D{{max.x, min.y}}, Vertex2D{{min.x, min.y}}, Vertex2D{{min.x, max.y}},
-                Vertex2D{{max.x, min.y}}, Vertex2D{{min.x, max.y}}, Vertex2D{{max.x, max.y}},
+                Vertex2D::from({max.x, min.y}, color), Vertex2D::from({min.x, min.y}, color), Vertex2D::from({min.x, max.y}, color),
+                Vertex2D::from({max.x, min.y}, color), Vertex2D::from({min.x, max.y}, color), Vertex2D::from({max.x, max.y}, color),
             };
 
             immediate_data.insert(immediate_data.end(), std::begin(rect), std::end(rect));
         }
 
-        constexpr void draw_circle(const glm::vec2 &center, const float radius, const int32_t segment_count = 32) {
+        constexpr void draw_circle(const glm::vec2 &center, const float radius, const glm::vec4 &color = {0, 0, 0, 1},
+                                   const int32_t segment_count = 32) {
             const float segment_radius = 1.0f / segment_count * 2.0f * glm::pi<float>();
 
-            float corner_a = 0.0f;
+            float corner_angle_a = 0.0f;
 
             for (int32_t i_segment = 1; i_segment <= segment_count; i_segment++) {
-                const float corner_b = corner_a + segment_radius;
+                const float corner_angle_b = corner_angle_a + segment_radius;
 
-                immediate_data.push_back(Vertex2D::from(center + glm::vec2{sinf(corner_a), cosf(corner_a)} * radius));
-                immediate_data.push_back(Vertex2D::from(center + glm::vec2{sinf(corner_b), cosf(corner_b)} * radius));
-                immediate_data.push_back(Vertex2D::from(center));
+                immediate_data.push_back(Vertex2D::from(center + glm::vec2{sinf(corner_angle_a), cosf(corner_angle_a)} * radius, color));
+                immediate_data.push_back(Vertex2D::from(center + glm::vec2{sinf(corner_angle_b), cosf(corner_angle_b)} * radius, color));
+                immediate_data.push_back(Vertex2D::from(center, color));
 
-                corner_a = corner_b;
+                corner_angle_a = corner_angle_b;
             }
         }
 
