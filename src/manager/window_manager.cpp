@@ -1,12 +1,19 @@
+#include <GLFW/glfw3.h>
+#include <manager/input_manager.hpp>
 #include <manager/window_manager.hpp>
 #include <utils/conditions.hpp>
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-
 namespace reach {
 
-void glfw_error_callback([[maybe_unused]] int error, const char *description) { LOG_ERROR(description); }
+static void glfw_error_callback([[maybe_unused]] int error, const char *description) { LOG_ERROR(description); }
+
+static void key_callback(GLFWwindow * /*window*/, int key, int /*scancode*/, int action, int /*mods*/) {
+    InputManager::get().key_callback(key, action);
+}
+
+static void cursor_position_callback(GLFWwindow * /*window*/, double xpos, double ypos) {
+    InputManager::get().cursor_position_callback(xpos, ypos);
+}
 
 static WindowManager *self = nullptr;
 
@@ -34,6 +41,9 @@ WindowManager::WindowManager(const glm::ivec2 width_height) {
 
     glfwGetFramebufferSize(glfw_window, &framebuffer_width_height.x, &framebuffer_width_height.y);
 
+    glfwSetKeyCallback(glfw_window, key_callback);
+    glfwSetCursorPosCallback(glfw_window, cursor_position_callback);
+
     self = this;
 }
 
@@ -48,8 +58,10 @@ WindowManager::~WindowManager() {
 
 bool WindowManager::should_close() { return glfwWindowShouldClose(glfw_window) || glfwGetKey(glfw_window, GLFW_KEY_ESCAPE); }
 
-void WindowManager::finish_frame() {
-    glfwSwapBuffers(glfw_window);
+void WindowManager::swap() { glfwSwapBuffers(glfw_window); }
+
+void WindowManager::poll() {
+    InputManager::get().reset();
     glfwPollEvents();
 }
 

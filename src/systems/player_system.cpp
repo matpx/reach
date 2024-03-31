@@ -1,5 +1,6 @@
 #include <components/camera_component.hpp>
 #include <components/transform_component.hpp>
+#include <manager/input_manager.hpp>
 #include <manager/model_manager.hpp>
 #include <manager/ui_manager.hpp>
 #include <manager/window_manager.hpp>
@@ -44,8 +45,10 @@ void update() {
 
     World::current().get<TransformComponent>(player).translation.y = sin(c) * 2;
 
-    UiManager::get().draw_rect(glm::vec2{0, 0}, glm::vec2{200, 200});
-    UiManager::get().draw_circle(glm::vec2{500, 500}, 100);
+    if (InputManager::get().is_action_pressed(InputAction::JUMP)) {
+        UiManager::get().draw_rect(glm::vec2{0, 0}, glm::vec2{200, 200});
+    }
+    UiManager::get().draw_circle(InputManager::get().get_mouse_position(), 100);
 }
 
 } // namespace reach::player_system
