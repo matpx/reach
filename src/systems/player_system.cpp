@@ -10,7 +10,7 @@
 
 namespace reach::player_system {
 
-void update() {
+void update(const float delta_time) {
     auto &world = World::current();
 
     const static entt::entity player = World::current().create();
@@ -42,18 +42,17 @@ void update() {
 
         // rotation
 
-        static glm::vec2 camera_rotation_axis = {};
+        static glm::vec2 camera_rotation = {};
 
-        camera_rotation_axis += input.get_mouse_position_delta() * 0.004f;
-
-        camera_rotation_axis.y = glm::clamp(camera_rotation_axis.y, -glm::pi<float>()/2, +glm::pi<float>()/2);
+        camera_rotation += input.get_mouse_position_delta() * 0.003f;
+        camera_rotation.y = glm::clamp(camera_rotation.y, -glm::pi<float>() / 2, glm::pi<float>() / 2);
 
         camera_transform.rotation =
-            glm::angleAxis(camera_rotation_axis.x, glm::vec3{0, -1, 0}) * glm::angleAxis(camera_rotation_axis.y, glm::vec3{-1, 0, 0});
+            glm::angleAxis(camera_rotation.x, glm::vec3{0, -1, 0}) * glm::angleAxis(camera_rotation.y, glm::vec3{-1, 0, 0});
 
         // translation
 
-        const float speed = 0.2f;
+        const float speed = 10.0f * delta_time;
         glm::vec3 velocity = {};
 
         if (input.is_action_pressed(InputAction::UP)) {

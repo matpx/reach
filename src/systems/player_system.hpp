@@ -2,6 +2,6 @@
 
 namespace reach::player_system {
 
-void update();
+void update(const float delta_time);
 
 }

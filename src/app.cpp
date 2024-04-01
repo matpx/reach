@@ -1,4 +1,5 @@
 #include <app.hpp>
+#include <chrono>
 #include <manager/device_manager.hpp>
 #include <manager/input_manager.hpp>
 #include <manager/material_manager.hpp>
@@ -25,11 +26,17 @@ void App::run() {
 
     LOG_DEBUG("debug mode!");
 
+    auto last_time = std::chrono::high_resolution_clock::now();
+
     while (!window_manager->should_close()) {
         window_manager->poll();
-        
+
+        const auto current_time = std::chrono::high_resolution_clock::now();
+        const float delta_time = std::chrono::duration<float, std::milli>(current_time - last_time).count() / 1000.0f;
+        last_time = current_time;
+
         transform_system::update();
-        player_system::update();
+        player_system::update(delta_time);
 
         render_system::post_update();
 
