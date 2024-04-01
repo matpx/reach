@@ -100,6 +100,9 @@ void DeviceManager::collect_gargabe() {
     sg_buffer delete_buffer;
     while (buffer_delete_queue.try_dequeue(delete_buffer)) {
         LOG_DEBUG("deleting buffer deferred: {}", delete_buffer.id);
+
+        PRECONDITION(delete_buffer.id != SG_INVALID_ID);
+
         sg_destroy_buffer(delete_buffer);
     }
 }
