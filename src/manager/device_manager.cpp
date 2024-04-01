@@ -10,7 +10,7 @@
 
 namespace reach {
 
-void sokol_log([[maybe_unused]] const char *tag, [[maybe_unused]] uint32_t log_level, [[maybe_unused]] uint32_t log_item,
+static void sokol_log([[maybe_unused]] const char *tag, [[maybe_unused]] uint32_t log_level, [[maybe_unused]] uint32_t log_item,
                const char *message, [[maybe_unused]] uint32_t line_nr, [[maybe_unused]] const char *filename,
                [[maybe_unused]] void *user_data) {
     LOG_ERROR(message);
