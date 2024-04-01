@@ -4,11 +4,14 @@
 #include <sokol_gfx.h>
 #include <stdint.h>
 #include <string_view>
+#include <utils/nocopy.hpp>
 #include <vec2.hpp>
 #include <vec4.hpp>
 #include <vector>
 
 namespace reach {
+
+using MeshIndex = uint32_t;
 
 struct Vertex2D {
         std::array<float, 2> position;
@@ -27,9 +30,9 @@ struct Vertex3D {
         std::array<float, 3> normal;
 };
 
-using MeshIndex = uint32_t;
+struct MeshData : public NoCopy {
+        ~MeshData();
 
-struct MeshData {
         std::string_view debug_name = "<unnamed MeshData>";
 
         std::vector<Vertex3D> vertex_data;

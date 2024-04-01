@@ -50,6 +50,12 @@ WindowManager::WindowManager(const glm::ivec2 width_height) {
     glfwSetKeyCallback(glfw_window, key_callback);
     glfwSetCursorPosCallback(glfw_window, cursor_position_callback);
 
+    {
+        double xpos, ypos;
+        glfwGetCursorPos(glfw_window, &xpos, &ypos);
+        cursor_position_callback(glfw_window, xpos, ypos);
+    }
+
     self = this;
 }
 

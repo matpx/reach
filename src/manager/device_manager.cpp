@@ -64,6 +64,8 @@ void DeviceManager::upload_meshdata(MeshData &mesh_data) {
 }
 
 void DeviceManager::unload_meshdata(MeshData &mesh_data) {
+    PRECONDITION(pass_is_active == false);
+
     LOG_DEBUG("unloading mesh_data: {}", mesh_data.debug_name);
 
     if (mesh_data.vertex_buffer.id != SG_INVALID_ID) {

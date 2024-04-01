@@ -42,6 +42,7 @@ src = [
     'src/impl.cpp',
     'src/app.cpp',
     'src/world.cpp',
+    'src/data/mesh_data.cpp',
     'src/manager/window_manager.cpp',
     'src/manager/input_manager.cpp',
     'src/manager/device_manager.cpp',
