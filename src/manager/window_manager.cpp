@@ -41,6 +41,12 @@ WindowManager::WindowManager(const glm::ivec2 width_height) {
 
     glfwGetFramebufferSize(glfw_window, &framebuffer_width_height.x, &framebuffer_width_height.y);
 
+    glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    if (glfwRawMouseMotionSupported()) {
+        glfwSetInputMode(glfw_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    }
+
     glfwSetKeyCallback(glfw_window, key_callback);
     glfwSetCursorPosCallback(glfw_window, cursor_position_callback);
 

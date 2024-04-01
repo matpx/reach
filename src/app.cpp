@@ -26,13 +26,14 @@ void App::run() {
     LOG_DEBUG("debug mode!");
 
     while (!window_manager->should_close()) {
+        window_manager->poll();
+        
         transform_system::update();
         player_system::update();
 
         render_system::post_update();
 
         window_manager->swap();
-        window_manager->poll();
     }
 }
 

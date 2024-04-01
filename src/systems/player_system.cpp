@@ -30,26 +30,46 @@ void update() {
             .or_else([](std::string error) { LOG_ERROR("Failed to load glb: {}", error); });
 
         world.current_camera = world.create();
-        world.emplace<TransformComponent>(world.current_camera, TransformComponent{});
-
+        world.emplace<TransformComponent>(world.current_camera, TransformComponent{.translation = {0, 0, 10}});
         world.emplace<CameraComponent>(world.current_camera,
                                        CameraComponent::make(1.4f, WindowManager::get().get_framebuffer_width_height(), 0.1f, 100.0f));
     }
 
-    auto &camera_transform = world.get<TransformComponent>(World::current().current_camera);
+    {
+        auto &camera_transform = world.get<TransformComponent>(World::current().current_camera);
 
-    static float c = 0;
-    c += 0.01f;
+        const auto &input = InputManager::get();
 
-    camera_transform.translation = glm::vec3{sin(c) * 10, 1, cos(c) * 10};
-    camera_transform.rotation = glm::quatLookAt(glm::normalize(-camera_transform.translation), glm::vec3{0, 1, 0});
+        // rotation
 
-    World::current().get<TransformComponent>(player).translation.y = sin(c) * 2;
+        static glm::vec2 camera_rotation_axis = {};
 
-    if (InputManager::get().is_action_pressed(InputAction::JUMP)) {
-        UiManager::get().draw_rect(glm::vec2{0, 0}, glm::vec2{200, 200});
+        camera_rotation_axis += input.get_mouse_position_delta() * 0.004f;
+
+        camera_rotation_axis.y = glm::clamp(camera_rotation_axis.y, -glm::pi<float>()/2, +glm::pi<float>()/2);
+
+        camera_transform.rotation =
+            glm::angleAxis(camera_rotation_axis.x, glm::vec3{0, -1, 0}) * glm::angleAxis(camera_rotation_axis.y, glm::vec3{-1, 0, 0});
+
+        // translation
+
+        const float speed = 0.2f;
+        glm::vec3 velocity = {};
+
+        if (input.is_action_pressed(InputAction::UP)) {
+            velocity.z -= speed;
+        } else if (input.is_action_pressed(InputAction::DOWN)) {
+            velocity.z += speed;
+        }
+
+        if (input.is_action_pressed(InputAction::LEFT)) {
+            velocity.x -= speed;
+        } else if (input.is_action_pressed(InputAction::RIGHT)) {
+            velocity.x += speed;
+        }
+
+        camera_transform.translation += camera_transform.rotation * velocity;
     }
-    UiManager::get().draw_circle(InputManager::get().get_mouse_position(), 100);
 }
 
 } // namespace reach::player_system

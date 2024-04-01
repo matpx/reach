@@ -24,7 +24,10 @@ class InputManager final : public Manager {
         std::unordered_set<InputAction> pressed_actions;
         std::unordered_set<InputAction> just_pressed_actions;
 
+        glm::vec2 previous_mouse_position = {};
         glm::vec2 mouse_position = {};
+
+        glm::vec2 mouse_position_delta = {};
 
     public:
         [[nodiscard]] static InputManager &get();
@@ -44,6 +47,7 @@ class InputManager final : public Manager {
         [[nodiscard]] inline bool is_action_just_pressed(const InputAction action) const { return just_pressed_actions.contains(action); }
 
         [[nodiscard]] inline const glm::vec2 &get_mouse_position() const { return mouse_position; }
+        [[nodiscard]] inline const glm::vec2 &get_mouse_position_delta() const { return mouse_position_delta; }
 };
 
 } // namespace reach

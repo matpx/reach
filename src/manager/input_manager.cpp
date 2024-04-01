@@ -29,6 +29,9 @@ InputManager::~InputManager() {
 void InputManager::reset() {
     just_pressed_keys.clear();
     just_pressed_actions.clear();
+
+    previous_mouse_position = mouse_position;
+    mouse_position_delta = {};
 }
 
 void InputManager::key_callback(int key, int action) {
@@ -51,6 +54,9 @@ void InputManager::key_callback(int key, int action) {
     }
 }
 
-void InputManager::cursor_position_callback(double x, double y) { mouse_position = {x, y}; }
+void InputManager::cursor_position_callback(double x, double y) {
+    mouse_position = {x, y};
+    mouse_position_delta = mouse_position - previous_mouse_position;
+}
 
 } // namespace reach
