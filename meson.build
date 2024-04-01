@@ -26,6 +26,7 @@ deps = [
     cmake.subproject('expected').dependency('expected'),
     cmake.subproject('GSL').dependency('GSL'),
     cmake.subproject('spdlog').dependency('spdlog'),
+    cmake.subproject('concurrentqueue').dependency('concurrentqueue'),
     cmake.subproject('glm').dependency('glm'),
     cmake.subproject('glfw').dependency('glfw'),
     cmake.subproject('entt').dependency('EnTT'),

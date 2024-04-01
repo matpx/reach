@@ -1,3 +1,4 @@
+#include "utils/log.hpp"
 #include <components/material_component.hpp>
 #include <components/mesh_component.hpp>
 #include <components/transform_component.hpp>
@@ -11,8 +12,8 @@
 namespace reach {
 
 static void sokol_log([[maybe_unused]] const char *tag, [[maybe_unused]] uint32_t log_level, [[maybe_unused]] uint32_t log_item,
-               const char *message, [[maybe_unused]] uint32_t line_nr, [[maybe_unused]] const char *filename,
-               [[maybe_unused]] void *user_data) {
+                      const char *message, [[maybe_unused]] uint32_t line_nr, [[maybe_unused]] const char *filename,
+                      [[maybe_unused]] void *user_data) {
     LOG_ERROR(message);
 }
 
@@ -37,6 +38,8 @@ DeviceManager::DeviceManager() {
 
 DeviceManager::~DeviceManager() {
     PRECONDITION(self != nullptr);
+
+    collect_gargabe();
 
     self = nullptr;
     sg_shutdown();
@@ -76,6 +79,28 @@ void DeviceManager::unload_meshdata(MeshData &mesh_data) {
     if (mesh_data.index_buffer.id != SG_INVALID_ID) {
         sg_destroy_buffer(mesh_data.index_buffer);
         mesh_data.index_buffer = {};
+    }
+}
+
+void DeviceManager::unload_meshdata_deferred(MeshData &mesh_data) {
+    LOG_DEBUG("deferred unloading mesh_data: {}", mesh_data.debug_name);
+
+    if (mesh_data.vertex_buffer.id != SG_INVALID_ID) {
+        buffer_delete_queue.enqueue(mesh_data.vertex_buffer);
+        mesh_data.vertex_buffer = {};
+    }
+
+    if (mesh_data.index_buffer.id != SG_INVALID_ID) {
+        buffer_delete_queue.enqueue(mesh_data.index_buffer);
+        mesh_data.index_buffer = {};
+    }
+}
+
+void DeviceManager::collect_gargabe() {
+    sg_buffer delete_buffer;
+    while (buffer_delete_queue.try_dequeue(delete_buffer)) {
+        LOG_DEBUG("deleting buffer deferred: {}", delete_buffer.id);
+        sg_destroy_buffer(delete_buffer);
     }
 }
 
@@ -157,6 +182,8 @@ void DeviceManager::finish_main_pass() {
 
     sg_end_pass();
     sg_commit();
+
+    collect_gargabe();
 }
 
 } // namespace reach
