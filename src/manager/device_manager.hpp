@@ -23,6 +23,10 @@ class DeviceManager final : public Manager {
 
         moodycamel::ConcurrentQueue<sg_buffer> buffer_delete_queue;
 
+        void collect_gargabe();
+
+        [[nodiscard]] constexpr bool context_is_ready() const { return !pass_is_active; }
+
     public:
         [[nodiscard]] static DeviceManager &get();
 
@@ -31,9 +35,6 @@ class DeviceManager final : public Manager {
 
         void upload_meshdata(MeshData &mesh_data);
         void unload_meshdata(MeshData &mesh_data);
-        void unload_meshdata_deferred(MeshData &mesh_data);
-
-        void collect_gargabe();
 
         void begin_main_pass();
         void draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,

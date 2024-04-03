@@ -69,31 +69,30 @@ void DeviceManager::upload_meshdata(MeshData &mesh_data) {
 void DeviceManager::unload_meshdata(MeshData &mesh_data) {
     PRECONDITION(pass_is_active == false);
 
-    LOG_DEBUG("unloading mesh_data: {}", mesh_data.debug_name);
+    if (context_is_ready()) {
+        LOG_DEBUG("unloading mesh_data: {}", mesh_data.debug_name);
 
-    if (mesh_data.vertex_buffer.id != SG_INVALID_ID) {
-        sg_destroy_buffer(mesh_data.vertex_buffer);
-        mesh_data.vertex_buffer = {};
+        if (mesh_data.vertex_buffer.id != SG_INVALID_ID) {
+            sg_destroy_buffer(mesh_data.vertex_buffer);
+        }
+
+        if (mesh_data.index_buffer.id != SG_INVALID_ID) {
+            sg_destroy_buffer(mesh_data.index_buffer);
+        }
+    } else {
+        LOG_DEBUG("unloading mesh_data (deferred): {}", mesh_data.debug_name);
+
+        if (mesh_data.vertex_buffer.id != SG_INVALID_ID) {
+            buffer_delete_queue.enqueue(mesh_data.vertex_buffer);
+        }
+
+        if (mesh_data.index_buffer.id != SG_INVALID_ID) {
+            buffer_delete_queue.enqueue(mesh_data.index_buffer);
+        }
     }
 
-    if (mesh_data.index_buffer.id != SG_INVALID_ID) {
-        sg_destroy_buffer(mesh_data.index_buffer);
-        mesh_data.index_buffer = {};
-    }
-}
-
-void DeviceManager::unload_meshdata_deferred(MeshData &mesh_data) {
-    LOG_DEBUG("deferred unloading mesh_data: {}", mesh_data.debug_name);
-
-    if (mesh_data.vertex_buffer.id != SG_INVALID_ID) {
-        buffer_delete_queue.enqueue(mesh_data.vertex_buffer);
-        mesh_data.vertex_buffer = {};
-    }
-
-    if (mesh_data.index_buffer.id != SG_INVALID_ID) {
-        buffer_delete_queue.enqueue(mesh_data.index_buffer);
-        mesh_data.index_buffer = {};
-    }
+    mesh_data.vertex_buffer = {};
+    mesh_data.index_buffer = {};
 }
 
 void DeviceManager::collect_gargabe() {

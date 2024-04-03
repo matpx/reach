@@ -3,6 +3,6 @@
 
 namespace reach {
 
-MeshData::~MeshData() { DeviceManager::get().unload_meshdata_deferred(*this); }
+MeshData::~MeshData() { DeviceManager::get().unload_meshdata(*this); }
 
 } // namespace reach
