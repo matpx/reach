@@ -31,7 +31,8 @@ deps = [
     cmake.subproject('glfw').dependency('glfw'),
     cmake.subproject('entt').dependency('EnTT'),
     subproject('sokol').get_variable('sokol_dep'),
-    subproject('cgltf').get_variable('cgltf_dep')
+    subproject('cgltf').get_variable('cgltf_dep'),
+    subproject('JoltPhysics').get_variable('jolt_dep')
 ]
 
 if build_machine.system() == 'linux'
