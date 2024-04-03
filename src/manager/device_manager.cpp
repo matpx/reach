@@ -1,4 +1,3 @@
-#include "utils/log.hpp"
 #include <components/material_component.hpp>
 #include <components/mesh_component.hpp>
 #include <components/transform_component.hpp>
@@ -7,7 +6,6 @@
 #include <manager/window_manager.hpp>
 #include <sokol_gfx.h>
 #include <utils/conditions.hpp>
-#include <utils/panic.hpp>
 
 namespace reach {
 

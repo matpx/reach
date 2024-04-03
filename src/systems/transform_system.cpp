@@ -1,4 +1,5 @@
 #include <components/transform_component.hpp>
+#include <gtx/quaternion.hpp>
 #include <world.hpp>
 
 namespace reach::transform_system {

@@ -1,5 +1,4 @@
 #include <manager/material_manager.hpp>
-#include <sokol_gfx.h>
 #include <utils/conditions.hpp>
 
 #include <unlit.glsl.h>

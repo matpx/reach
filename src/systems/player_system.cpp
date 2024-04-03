@@ -2,7 +2,6 @@
 #include <components/transform_component.hpp>
 #include <manager/input_manager.hpp>
 #include <manager/model_manager.hpp>
-#include <manager/ui_manager.hpp>
 #include <manager/window_manager.hpp>
 #include <systems/player_system.hpp>
 #include <utils/log.hpp>
@@ -52,7 +51,7 @@ void update(const float delta_time) {
 
         // translation
 
-        const float speed = 10.0f * delta_time;
+        const float speed = 20.0f * delta_time;
         glm::vec3 velocity = {};
 
         if (input.is_action_pressed(InputAction::UP)) {
@@ -65,6 +64,10 @@ void update(const float delta_time) {
             velocity.x -= speed;
         } else if (input.is_action_pressed(InputAction::RIGHT)) {
             velocity.x += speed;
+        }
+
+        if (input.is_action_pressed(InputAction::JUMP)) {
+            velocity *= 4;
         }
 
         camera_transform.translation += camera_transform.rotation * velocity;

@@ -1,7 +1,5 @@
 #include <components/camera_component.hpp>
-#include <data/mesh_data.hpp>
 #include <manager/device_manager.hpp>
-#include <manager/material_manager.hpp>
 #include <manager/ui_manager.hpp>
 #include <utils/conditions.hpp>
 #include <world.hpp>

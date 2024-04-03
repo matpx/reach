@@ -2,7 +2,6 @@
 
 #include <entt/entity/entity.hpp>
 #include <gtc/quaternion.hpp>
-#include <gtx/quaternion.hpp>
 #include <mat4x4.hpp>
 #include <vec3.hpp>
 
