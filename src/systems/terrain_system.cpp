@@ -24,6 +24,8 @@ void update() {
 
         std::shared_ptr<MeshData> mesh_data = std::make_shared<MeshData>();
 
+        mesh_data->debug_name = "terrain chunk data";
+
         const float bmin[3] = {-planet_max_radius / 2, -planet_max_radius / 2, -planet_max_radius / 2};
         const float bmax[3] = {+planet_max_radius / 2, +planet_max_radius / 2, +planet_max_radius / 2};
         const float resolution = planet_max_radius / 20.0f;
@@ -44,6 +46,7 @@ void update() {
         }
 
         MeshComponent mesh_comp = {
+            .debug_name = "terrain chunk",
             .mesh_data = mesh_data,
             .index_count = static_cast<uint32_t>(mesh_data->index_data.size()),
             .index_offset = 0,

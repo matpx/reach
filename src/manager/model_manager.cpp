@@ -76,6 +76,7 @@ static tl::expected<std::tuple<MeshComponent, MaterialComponent>, std::string> p
     }
 
     MeshComponent mesh_component = {
+        .debug_name = "gltf model",
         .mesh_data = mesh_data,
         .index_offset = static_cast<uint32_t>(mesh_data->index_data.size()),
     };
@@ -137,6 +138,9 @@ tl::expected<std::shared_ptr<Prefab>, std::string> ModelManager::load_gltf(const
     }
 
     std::shared_ptr<MeshData> mesh_data = std::make_shared<MeshData>();
+
+    mesh_data->debug_name = "glft model data";
+
     std::unordered_map<std::uintptr_t, std::tuple<MeshComponent, MaterialComponent>> mesh_components;
 
     for (const cgltf_mesh &mesh : std::span<cgltf_mesh>(data->meshes, data->meshes_count)) {
