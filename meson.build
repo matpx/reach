@@ -32,6 +32,7 @@ deps = [
     cmake.subproject('entt').dependency('EnTT'),
     subproject('sokol').get_variable('sokol_dep'),
     subproject('cgltf').get_variable('cgltf_dep'),
+    subproject('rjm').get_variable('rjm_dep'),
     subproject('JoltPhysics').get_variable('jolt_dep')
 ]
 
@@ -53,7 +54,8 @@ src = [
     'src/manager/ui_manager.cpp',
     'src/systems/transform_system.cpp',
     'src/systems/render_system.cpp',
-    'src/systems/player_system.cpp'
+    'src/systems/player_system.cpp',
+    'src/systems/terrain_system.cpp'
 ]
 
 executable('reach',

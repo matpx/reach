@@ -23,8 +23,8 @@ ModelManager::~ModelManager() {
     self = nullptr;
 }
 
-static tl::expected<std::tuple<MeshComponent, MaterialComponent>, std::string>
-parse_prim(gsl::not_null<std::shared_ptr<MeshData>> &mesh_data, const cgltf_primitive &prim) {
+static tl::expected<std::tuple<MeshComponent, MaterialComponent>, std::string> parse_prim(std::shared_ptr<MeshData> &mesh_data,
+                                                                                          const cgltf_primitive &prim) {
     if (prim.indices->is_sparse) {
         return tl::make_unexpected("cgltf prim contains sparse index accessor");
     }
@@ -110,7 +110,7 @@ static void parse_node(Prefab &prefab,
         }
     }
 
-    for (const gsl::not_null<const cgltf_node *const> child : std::span<cgltf_node *>(node.children, node.children_count)) {
+    for (const cgltf_node *child : std::span<cgltf_node *>(node.children, node.children_count)) {
         parse_node(prefab, mesh_components, *child);
     }
 
@@ -122,7 +122,7 @@ tl::expected<std::shared_ptr<Prefab>, std::string> ModelManager::load_gltf(const
 
     gsl::owner<cgltf_data *> data = nullptr;
 
-    auto _ = gsl::finally([&data] { cgltf_free(data); });
+    const auto _ = gsl::finally([&data] { cgltf_free(data); });
 
     if (cgltf_parse_file(&options, path.data(), &data) != cgltf_result_success) {
         return tl::make_unexpected("cgltf failed to load or parse file");
@@ -136,7 +136,7 @@ tl::expected<std::shared_ptr<Prefab>, std::string> ModelManager::load_gltf(const
         return tl::make_unexpected("cgltf failed to validate");
     }
 
-    gsl::not_null<std::shared_ptr<MeshData>> mesh_data = std::make_shared<MeshData>();
+    std::shared_ptr<MeshData> mesh_data = std::make_shared<MeshData>();
     std::unordered_map<std::uintptr_t, std::tuple<MeshComponent, MaterialComponent>> mesh_components;
 
     for (const cgltf_mesh &mesh : std::span<cgltf_mesh>(data->meshes, data->meshes_count)) {

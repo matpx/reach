@@ -6,3 +6,6 @@
 
 #define CGLTF_IMPLEMENTATION
 #include <cgltf.h>
+
+#define MC_IMPLEMENTATION
+#include <rjm_mc.h>

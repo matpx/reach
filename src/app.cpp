@@ -8,9 +8,11 @@
 #include <manager/window_manager.hpp>
 #include <systems/player_system.hpp>
 #include <systems/render_system.hpp>
+#include <systems/terrain_system.hpp>
 #include <systems/transform_system.hpp>
 #include <utils/log.hpp>
 #include <world.hpp>
+
 
 namespace reach {
 
@@ -36,6 +38,7 @@ void App::run() {
         last_time = current_time;
 
         transform_system::update();
+        terrain_system::update();
         player_system::update(delta_time);
 
         render_system::post_update();
