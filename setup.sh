@@ -2,4 +2,5 @@
 
 set -e
 
-meson setup build --wipe
+rm -rf build
+meson setup build
