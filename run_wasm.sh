@@ -2,5 +2,5 @@
 
 set -e
 
-meson compile -C build
+meson compile -C build reach
 python -m http.server
