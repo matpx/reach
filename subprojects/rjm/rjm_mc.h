@@ -85,6 +85,11 @@
 #define MC_REALLOC	realloc
 #endif
 
+#ifndef MC_FREE
+#include <stdlib.h>
+#define MC_FREE	free
+#endif
+
 typedef struct {
 	float x, y, z;
 	float nx, ny, nz;
@@ -665,15 +670,15 @@ McMesh mcGenerate(const float *bmin, const float *bmax, const float cellsize, Mc
 	}
 
 end:
-	MC_REALLOC(grid0, 0);
-	MC_REALLOC(grid1, 0);
+	MC_FREE(grid0);
+	MC_FREE(grid1);
 	return help.mesh;
 }
 
 void mcFree(McMesh *mesh)
 {
-	MC_REALLOC(mesh->verts, 0);
-	MC_REALLOC(mesh->indices, 0);
+	MC_FREE(mesh->verts);
+	MC_FREE(mesh->indices);
 	mesh->nverts = 0;
 	mesh->ntris = 0;
 }
