@@ -11,11 +11,17 @@ shdc = find_program('sokol-shdc',
 shader_sources = ['unlit', 'immediate']
 shader_targets = []
 
+if meson.is_cross_build()
+    slang = 'glsl300es'
+else
+    slang = 'glsl330'
+endif
+
 foreach s : shader_sources
     shader_targets += custom_target('shader_target_' + s,
         output : s + '.glsl.h',
         input : 'src/shader/' + s + '.glsl',
-        command : [shdc, '--slang=glsl330', '--reflection', '--format=sokol', '--input=@INPUT@', '--output=@OUTPUT@'])
+        command : [shdc, '--slang=' + slang, '--reflection', '--format=sokol', '--input=@INPUT@', '--output=@OUTPUT@'])
 endforeach
 
 # main executable
@@ -28,13 +34,16 @@ deps = [
     cmake.subproject('spdlog').dependency('spdlog'),
     cmake.subproject('concurrentqueue').dependency('concurrentqueue'),
     cmake.subproject('glm').dependency('glm'),
-    cmake.subproject('glfw').dependency('glfw'),
     cmake.subproject('entt').dependency('EnTT'),
     subproject('sokol').get_variable('sokol_dep'),
     subproject('cgltf').get_variable('cgltf_dep'),
     subproject('rjm').get_variable('rjm_dep'),
     subproject('JoltPhysics').get_variable('jolt_dep')
 ]
+
+if not meson.is_cross_build()
+    deps += cmake.subproject('glfw').dependency('glfw')
+endif
 
 if build_machine.system() == 'linux'
     deps += dependency('gl')
@@ -58,9 +67,16 @@ src = [
     'src/systems/terrain_system.cpp'
 ]
 
+reach_link_args = []
+
+if meson.is_cross_build()
+    reach_link_args += ['-sUSE_GLFW=3', '-sFULL_ES3']
+endif
+
 executable('reach',
     src + shader_targets,
     dependencies: deps,
     include_directories: ['src/'],
     override_options : ['cpp_std=c++20', 'cpp_eh=none', 'cpp_rtti=false', 'werror=true', 'warning_level=3'],
-    cpp_args : ['-D_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING', '-D_HAS_EXCEPTIONS=0', '-DGLFW_INCLUDE_NONE', '-DGLM_ENABLE_EXPERIMENTAL', '-DSPDLOG_NO_EXCEPTIONS', '-DENTT_NOEXCEPTION'])
+    cpp_args : ['-D_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING', '-D_HAS_EXCEPTIONS=0', '-DGLFW_INCLUDE_NONE', '-DGLM_ENABLE_EXPERIMENTAL', '-DSPDLOG_NO_EXCEPTIONS', '-DENTT_NOEXCEPTION'],
+    link_args : reach_link_args)

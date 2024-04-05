@@ -78,6 +78,7 @@ static tl::expected<std::tuple<MeshComponent, MaterialComponent>, std::string> p
     MeshComponent mesh_component = {
         .debug_name = "gltf model",
         .mesh_data = mesh_data,
+        .index_count = 0,
         .index_offset = static_cast<uint32_t>(mesh_data->index_data.size()),
     };
 

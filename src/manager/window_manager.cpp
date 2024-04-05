@@ -37,7 +37,6 @@ WindowManager::WindowManager(const glm::ivec2 width_height) {
     POSTCONDITION(glfw_window != nullptr);
 
     glfwMakeContextCurrent(glfw_window);
-    glfwSwapInterval(1);
 
     glfwGetFramebufferSize(glfw_window, &framebuffer_width_height.x, &framebuffer_width_height.y);
 

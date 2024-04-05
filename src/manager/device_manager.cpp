@@ -7,6 +7,10 @@
 #include <sokol_gfx.h>
 #include <utils/conditions.hpp>
 
+#ifdef __EMSCRIPTEN__
+#pragma clang diagnostic ignored "-Wmissing-designated-field-initializers"
+#endif
+
 namespace reach {
 
 static void sokol_log([[maybe_unused]] const char *tag, [[maybe_unused]] uint32_t log_level, [[maybe_unused]] uint32_t log_item,

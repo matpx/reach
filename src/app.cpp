@@ -13,8 +13,14 @@
 #include <utils/log.hpp>
 #include <world.hpp>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 namespace reach {
+
+std::function<void()> main_loop;
+void wasm_main_loop() { main_loop(); }
 
 App::App()
     : input_manager(std::make_unique<InputManager>()), window_manager(std::make_unique<WindowManager>(glm::ivec2{1600, 1000})),
@@ -30,7 +36,7 @@ void App::run() {
 
     auto last_time = std::chrono::high_resolution_clock::now();
 
-    while (!window_manager->should_close()) {
+    main_loop = [&] {
         window_manager->poll();
 
         const auto current_time = std::chrono::high_resolution_clock::now();
@@ -44,7 +50,15 @@ void App::run() {
         render_system::post_update();
 
         window_manager->swap();
+    };
+
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop(wasm_main_loop, 0, true);
+#else
+    while (!window_manager->should_close()) {
+        main_loop();
     }
+#endif
 }
 
 } // namespace reach
