@@ -6,6 +6,7 @@
 #include <manager/model_manager.hpp>
 #include <manager/ui_manager.hpp>
 #include <manager/window_manager.hpp>
+#include <manager/physics_manager.hpp>
 #include <systems/player_system.hpp>
 #include <systems/render_system.hpp>
 #include <systems/terrain_system.hpp>
@@ -24,8 +25,9 @@ void wasm_main_loop() { main_loop(); }
 
 App::App()
     : input_manager(std::make_unique<InputManager>()), window_manager(std::make_unique<WindowManager>(glm::ivec2{1600, 1000})),
-      device_manager(std::make_unique<DeviceManager>()), material_manager(std::make_unique<MaterialManager>()),
-      model_manager(std::make_unique<ModelManager>()), ui_manager(std::make_unique<UiManager>()), world(std::make_unique<World>()) {}
+      physics_manager(std::make_unique<PhysicsManager>()), device_manager(std::make_unique<DeviceManager>()),
+      material_manager(std::make_unique<MaterialManager>()), model_manager(std::make_unique<ModelManager>()),
+      ui_manager(std::make_unique<UiManager>()), world(std::make_unique<World>()) {}
 
 void App::run() {
 #ifndef NDEBUG
