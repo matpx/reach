@@ -3,14 +3,7 @@
 
 #include <Jolt/Jolt.h>
 
-#include <Jolt/Core/Factory.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
-#include <Jolt/Core/TempAllocator.h>
-#include <Jolt/Physics/Body/BodyActivationListener.h>
-#include <Jolt/Physics/Body/BodyCreationSettings.h>
-#include <Jolt/Physics/Collision/Shape/BoxShape.h>
-#include <Jolt/Physics/Collision/Shape/SphereShape.h>
-#include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/RegisterTypes.h>
 
@@ -19,7 +12,6 @@ namespace reach {
 JPH_SUPPRESS_WARNINGS
 
 using namespace JPH;
-
 using namespace JPH::literals;
 
 namespace Layers {
@@ -110,8 +102,8 @@ PhysicsManager::PhysicsManager() {
 
     RegisterTypes();
 
-    static TempAllocatorImpl temp_allocator(10 * 1024 * 1024);
-    static JobSystemThreadPool job_system(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
+    temp_allocator = std::make_unique<TempAllocatorImpl>(10 * 1024 * 1024);
+    job_system = std::make_unique<JobSystemThreadPool>(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
 
     const uint cMaxBodies = 1024;
     const uint cNumBodyMutexes = 0;
@@ -138,6 +130,12 @@ PhysicsManager::~PhysicsManager() {
     Factory::sInstance = nullptr;
 
     self = nullptr;
+}
+
+void PhysicsManager::update(const float dt) {
+    const int cCollisionSteps = 1;
+
+    physics_system->Update(dt, cCollisionSteps, temp_allocator.get(), job_system.get());
 }
 
 } // namespace reach

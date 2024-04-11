@@ -4,9 +4,9 @@
 #include <manager/input_manager.hpp>
 #include <manager/material_manager.hpp>
 #include <manager/model_manager.hpp>
+#include <manager/physics_manager.hpp>
 #include <manager/ui_manager.hpp>
 #include <manager/window_manager.hpp>
-#include <manager/physics_manager.hpp>
 #include <systems/player_system.hpp>
 #include <systems/render_system.hpp>
 #include <systems/terrain_system.hpp>
@@ -45,6 +45,8 @@ void App::run() {
         const float delta_time = std::chrono::duration<float, std::milli>(current_time - last_time).count() / 1000.0f;
         last_time = current_time;
 
+        physics_manager->update(delta_time);
+
         transform_system::update();
         terrain_system::update();
         player_system::update(delta_time);
@@ -61,6 +63,8 @@ void App::run() {
         main_loop();
     }
 #endif
+
+    main_loop = {};
 }
 
 } // namespace reach
