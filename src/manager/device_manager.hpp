@@ -24,7 +24,7 @@ class DeviceManager final : public Manager {
 
         IDXGISwapChain *SwapChain;
         ID3D11Device *d3d11Device;
-        ID3D11DeviceContext *d3d11DevCon;
+        ID3D11DeviceContext *d3d11DeviveContext;
         ID3D11RenderTargetView *renderTargetView;
 
         void init_d3d11();

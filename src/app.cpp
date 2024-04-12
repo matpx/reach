@@ -30,12 +30,6 @@ App::App()
       ui_manager(std::make_unique<UiManager>()), world(std::make_unique<World>()) {}
 
 void App::run() {
-#ifndef NDEBUG
-    spdlog::set_level(spdlog::level::debug);
-#endif
-
-    LOG_DEBUG("debug mode!");
-
     auto last_time = std::chrono::high_resolution_clock::now();
 
     main_loop = [&] {

@@ -145,7 +145,7 @@ tl::expected<std::shared_ptr<Prefab>, std::string> ModelManager::load_gltf(const
     std::unordered_map<std::uintptr_t, std::tuple<MeshComponent, MaterialComponent>> mesh_components;
 
     for (const cgltf_mesh &mesh : std::span<cgltf_mesh>(data->meshes, data->meshes_count)) {
-        LOG_DEBUG("cgltf parse mesh: {}", mesh.name);
+        LOG_INFO("cgltf parse mesh: {}", mesh.name);
 
         for (const cgltf_primitive &prim : std::span<cgltf_primitive>(mesh.primitives, mesh.primitives_count)) {
             auto prim_result = parse_prim(mesh_data, prim);

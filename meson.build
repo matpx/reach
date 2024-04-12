@@ -37,7 +37,10 @@ deps = [
 if build_machine.system() == 'linux'
     deps += dependency('gl')
 elif build_machine.system() == 'windows'
-    deps += meson.get_compiler('cpp').find_library('d3d11')
+    cpp = meson.get_compiler('cpp')
+
+    deps += cpp.find_library('d3d11')
+    deps += cpp.find_library('dxguid')
 endif
 
 src = [

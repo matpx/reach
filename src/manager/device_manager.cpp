@@ -4,7 +4,8 @@
 #include <data/mesh_data.hpp>
 #include <manager/device_manager.hpp>
 #include <manager/window_manager.hpp>
-#include <nvrhi/nvrhi.h>
+#include <nvrhi/d3d11.h>
+#include <nvrhi/validation.h>
 #include <utils/conditions.hpp>
 
 #define WIN32_LEAN_AND_MEAN
@@ -16,6 +17,10 @@
 #include <GLFW/glfw3native.h>
 
 namespace reach {
+
+class MessageCallback final : public nvrhi::IMessageCallback {
+        virtual void message(nvrhi::MessageSeverity severity, const char *messageText) { LOG_ERROR(messageText); };
+};
 
 static DeviceManager *self = nullptr;
 
@@ -34,7 +39,7 @@ DeviceManager::~DeviceManager() {
 
     SwapChain->Release();
     d3d11Device->Release();
-    d3d11DevCon->Release();
+    d3d11DeviveContext->Release();
 
     self = nullptr;
 }
@@ -69,9 +74,16 @@ void DeviceManager::init_d3d11() {
     swapChainDesc.Windowed = TRUE;
     swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
+    UINT device_flags = 0;
+
+#ifndef NDEBUG
+    LOG_INFO("enable d3d11 D3D11_CREATE_DEVICE_DEBUG");
+    device_flags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
     // Create our SwapChain
-    HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION, &swapChainDesc,
-                                               &SwapChain, &d3d11Device, NULL, &d3d11DevCon);
+    HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, device_flags, NULL, NULL, D3D11_SDK_VERSION,
+                                               &swapChainDesc, &SwapChain, &d3d11Device, NULL, &d3d11DeviveContext);
     POSTCONDITION(SUCCEEDED(hr));
 
     // Create our BackBuffer
@@ -85,7 +97,21 @@ void DeviceManager::init_d3d11() {
     POSTCONDITION(SUCCEEDED(hr));
 
     // Set our Render Target
-    d3d11DevCon->OMSetRenderTargets(1, &renderTargetView, NULL);
+    d3d11DeviveContext->OMSetRenderTargets(1, &renderTargetView, NULL);
+
+    static MessageCallback message_callback;
+
+    nvrhi::d3d11::DeviceDesc device_desc;
+    device_desc.messageCallback = static_cast<nvrhi::IMessageCallback *>(&message_callback);
+    device_desc.context = d3d11DeviveContext;
+
+    nvrhi::DeviceHandle nvrhi_device = nvrhi::d3d11::createDevice(device_desc);
+
+#ifndef NDEBUG
+    LOG_INFO("enable nvrhi validation");
+    nvrhi::DeviceHandle nvrhi_validation_layer = nvrhi::validation::createValidationLayer(nvrhi_device);
+    nvrhi_device = nvrhi_validation_layer;
+#endif
 }
 
 void DeviceManager::swap_d3d11() { SwapChain->Present(0, 0); }
