@@ -28,9 +28,9 @@ void post_update() {
             continue;
         }
 
-        if (material.pipeline.id == SG_INVALID_ID) {
-            material = MaterialManager::get().unlit_material;
-        }
+        // if (material.pipeline.id == SG_INVALID_ID) {
+        //     material = MaterialManager::get().unlit_material;
+        // }
 
         if (!mesh.mesh_data->is_uploaded()) {
             DeviceManager::get().upload_meshdata(*mesh.mesh_data);

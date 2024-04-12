@@ -4,7 +4,6 @@
 #include <data/mesh_data.hpp>
 #include <manager/manager.hpp>
 #include <mat4x4.hpp>
-#include <sokol_gfx.h>
 #include <span>
 
 namespace reach {
@@ -18,15 +17,6 @@ class DeviceManager final : public Manager {
     private:
         bool pass_is_active = false;
 
-        sg_buffer_desc immediate_buffer_desc = {};
-        sg_buffer immediate_buffer = {};
-
-        moodycamel::ConcurrentQueue<sg_buffer> buffer_delete_queue;
-
-        void collect_gargabe();
-
-        [[nodiscard]] constexpr bool context_is_ready() const { return !pass_is_active; }
-
     public:
         [[nodiscard]] static DeviceManager &get();
 
@@ -34,7 +24,6 @@ class DeviceManager final : public Manager {
         ~DeviceManager();
 
         void upload_meshdata(MeshData &mesh_data);
-        void unload_meshdata(MeshData &mesh_data);
 
         void begin_main_pass();
         void draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,

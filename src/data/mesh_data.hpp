@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <sokol_gfx.h>
 #include <stdint.h>
 #include <string_view>
 #include <utils/nocopy.hpp>
@@ -30,18 +29,13 @@ struct Vertex3D {
         std::array<float, 3> normal;
 };
 
-struct MeshData : public NoCopy {
-        ~MeshData();
-
+struct MeshData {
         std::string_view debug_name = "<unnamed MeshData>";
 
         std::vector<Vertex3D> vertex_data;
         std::vector<MeshIndex> index_data;
 
-        sg_buffer vertex_buffer = {};
-        sg_buffer index_buffer = {};
-
-        [[nodiscard]] constexpr bool is_uploaded() { return vertex_buffer.id != SG_INVALID_ID; }
+        [[nodiscard]] constexpr bool is_uploaded() { return true; }
 };
 
 } // namespace reach
