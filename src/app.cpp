@@ -52,8 +52,6 @@ void App::run() {
         player_system::update(delta_time);
 
         render_system::post_update();
-
-        window_manager->swap();
     };
 
 #ifdef __EMSCRIPTEN__

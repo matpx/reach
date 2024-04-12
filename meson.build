@@ -14,6 +14,8 @@ shader_make_target = custom_target(
 
 # main executable
 
+nvrhi = cmake.subproject('nvrhi')
+
 deps = [
     cmake.subproject('expected').dependency('expected'),
     cmake.subproject('GSL').dependency('GSL'),
@@ -21,6 +23,8 @@ deps = [
     cmake.subproject('concurrentqueue').dependency('concurrentqueue'),
     cmake.subproject('glm').dependency('glm'),
     cmake.subproject('entt').dependency('EnTT'),
+    nvrhi.dependency('nvrhi'),
+    nvrhi.dependency('nvrhi_d3d11'),
     subproject('cgltf').get_variable('cgltf_dep'),
     subproject('rjm').get_variable('rjm_dep'),
     subproject('JoltPhysics').get_variable('jolt_dep')
@@ -30,9 +34,11 @@ deps = [
     deps += cmake.subproject('glfw').dependency('glfw')
 # endif
 
-# if build_machine.system() == 'linux'
-#     deps += dependency('gl')
-# endif
+if build_machine.system() == 'linux'
+    deps += dependency('gl')
+elif build_machine.system() == 'windows'
+    deps += meson.get_compiler('cpp').find_library('d3d11')
+endif
 
 src = [
     'src/main.cpp',

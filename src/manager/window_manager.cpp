@@ -19,7 +19,7 @@ static WindowManager *self = nullptr;
 
 WindowManager &WindowManager::get() { return *self; }
 
-WindowManager::WindowManager(const glm::ivec2 width_height) {
+WindowManager::WindowManager(const glm::ivec2 width_height) : window_width_height(width_height) {
     PRECONDITION(self == nullptr);
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -27,18 +27,17 @@ WindowManager::WindowManager(const glm::ivec2 width_height) {
     const int32_t glfw_init_result = glfwInit();
     POSTCONDITION(glfw_init_result != 0);
 
-    glfwWindowHint(GLFW_SAMPLES, sample_count);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // glfwWindowHint(GLFW_SAMPLES, sample_count);
+    // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     glfw_window = glfwCreateWindow(width_height.x, width_height.y, "Reach", NULL, NULL);
     POSTCONDITION(glfw_window != nullptr);
 
-    glfwMakeContextCurrent(glfw_window);
-
-    glfwGetFramebufferSize(glfw_window, &framebuffer_width_height.x, &framebuffer_width_height.y);
+    // glfwMakeContextCurrent(glfw_window);
 
     glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -68,8 +67,6 @@ WindowManager::~WindowManager() {
 }
 
 bool WindowManager::should_close() { return glfwWindowShouldClose(glfw_window) || glfwGetKey(glfw_window, GLFW_KEY_ESCAPE); }
-
-void WindowManager::swap() { glfwSwapBuffers(glfw_window); }
 
 void WindowManager::poll() {
     InputManager::get().reset();

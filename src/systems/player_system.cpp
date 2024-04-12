@@ -31,7 +31,7 @@ void update(const float delta_time) {
         world.current_camera = world.create();
         world.emplace<TransformComponent>(world.current_camera, TransformComponent{.translation = {0, 0, 10}});
         world.emplace<CameraComponent>(world.current_camera,
-                                       CameraComponent::make(1.4f, WindowManager::get().get_framebuffer_width_height(), 0.1f, 100.0f));
+                                       CameraComponent::make(1.4f, WindowManager::get().get_window_width_height(), 0.1f, 100.0f));
     }
 
     {

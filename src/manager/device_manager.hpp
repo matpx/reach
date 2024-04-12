@@ -6,6 +6,11 @@
 #include <mat4x4.hpp>
 #include <span>
 
+struct IDXGISwapChain;
+struct ID3D11Device;
+struct ID3D11DeviceContext;
+struct ID3D11RenderTargetView;
+
 namespace reach {
 
 struct MeshData;
@@ -16,6 +21,14 @@ struct TransformComponent;
 class DeviceManager final : public Manager {
     private:
         bool pass_is_active = false;
+
+        IDXGISwapChain *SwapChain;
+        ID3D11Device *d3d11Device;
+        ID3D11DeviceContext *d3d11DevCon;
+        ID3D11RenderTargetView *renderTargetView;
+
+        void init_d3d11();
+        void swap_d3d11();
 
     public:
         [[nodiscard]] static DeviceManager &get();
