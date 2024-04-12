@@ -22,9 +22,9 @@ class DeviceManager final : public Manager {
     private:
         bool pass_is_active = false;
 
-        IDXGISwapChain *SwapChain;
-        ID3D11Device *d3d11Device;
-        ID3D11DeviceContext *d3d11DeviveContext;
+        IDXGISwapChain *swap_chain;
+        ID3D11Device *d3d11_device;
+        ID3D11DeviceContext *d3d11_device_context;
         ID3D11RenderTargetView *renderTargetView;
 
         void init_d3d11();

@@ -37,9 +37,9 @@ DeviceManager::DeviceManager() {
 DeviceManager::~DeviceManager() {
     PRECONDITION(self != nullptr);
 
-    SwapChain->Release();
-    d3d11Device->Release();
-    d3d11DeviveContext->Release();
+    swap_chain->Release();
+    d3d11_device->Release();
+    d3d11_device_context->Release();
 
     self = nullptr;
 }
@@ -48,31 +48,29 @@ void DeviceManager::init_d3d11() {
     const glm::ivec2 width_height = WindowManager::get().get_window_width_height();
     HWND hwnd = glfwGetWin32Window(WindowManager::get().get_glfw_window());
 
-    // Describe our Buffer
-    DXGI_MODE_DESC bufferDesc;
-    ZeroMemory(&bufferDesc, sizeof(DXGI_MODE_DESC));
+    DXGI_MODE_DESC buffer_desc;
+    ZeroMemory(&buffer_desc, sizeof(DXGI_MODE_DESC));
 
-    bufferDesc.Width = width_height.x;
-    bufferDesc.Height = width_height.y;
-    bufferDesc.RefreshRate.Numerator = 60;
-    bufferDesc.RefreshRate.Denominator = 1;
-    bufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    bufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-    bufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+    buffer_desc.Width = width_height.x;
+    buffer_desc.Height = width_height.y;
+    buffer_desc.RefreshRate.Numerator = 60;
+    buffer_desc.RefreshRate.Denominator = 1;
+    buffer_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    buffer_desc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+    buffer_desc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
-    // Describe our SwapChain
-    DXGI_SWAP_CHAIN_DESC swapChainDesc;
+    DXGI_SWAP_CHAIN_DESC swap_chain_desc;
 
-    ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
+    ZeroMemory(&swap_chain_desc, sizeof(DXGI_SWAP_CHAIN_DESC));
 
-    swapChainDesc.BufferDesc = bufferDesc;
-    swapChainDesc.SampleDesc.Count = 1;
-    swapChainDesc.SampleDesc.Quality = 0;
-    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    swapChainDesc.BufferCount = 1;
-    swapChainDesc.OutputWindow = hwnd;
-    swapChainDesc.Windowed = TRUE;
-    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+    swap_chain_desc.BufferDesc = buffer_desc;
+    swap_chain_desc.SampleDesc.Count = 1;
+    swap_chain_desc.SampleDesc.Quality = 0;
+    swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    swap_chain_desc.BufferCount = 1;
+    swap_chain_desc.OutputWindow = hwnd;
+    swap_chain_desc.Windowed = TRUE;
+    swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
     UINT device_flags = 0;
 
@@ -81,29 +79,24 @@ void DeviceManager::init_d3d11() {
     device_flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-    // Create our SwapChain
     HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, device_flags, NULL, NULL, D3D11_SDK_VERSION,
-                                               &swapChainDesc, &SwapChain, &d3d11Device, NULL, &d3d11DeviveContext);
+                                               &swap_chain_desc, &swap_chain, &d3d11_device, NULL, &d3d11_device_context);
     POSTCONDITION(SUCCEEDED(hr));
 
-    // Create our BackBuffer
-    ID3D11Texture2D *BackBuffer;
-    hr = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void **)&BackBuffer);
+    ID3D11Texture2D *back_buffer;
+    hr = swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void **)&back_buffer);
     POSTCONDITION(SUCCEEDED(hr));
 
-    // Create our Render Target
-    hr = d3d11Device->CreateRenderTargetView(BackBuffer, NULL, &renderTargetView);
-    BackBuffer->Release();
+    hr = d3d11_device->CreateRenderTargetView(back_buffer, NULL, &renderTargetView);
     POSTCONDITION(SUCCEEDED(hr));
 
-    // Set our Render Target
-    d3d11DeviveContext->OMSetRenderTargets(1, &renderTargetView, NULL);
+    d3d11_device_context->OMSetRenderTargets(1, &renderTargetView, NULL);
 
     static MessageCallback message_callback;
 
     nvrhi::d3d11::DeviceDesc device_desc;
     device_desc.messageCallback = static_cast<nvrhi::IMessageCallback *>(&message_callback);
-    device_desc.context = d3d11DeviveContext;
+    device_desc.context = d3d11_device_context;
 
     nvrhi::DeviceHandle nvrhi_device = nvrhi::d3d11::createDevice(device_desc);
 
@@ -112,9 +105,22 @@ void DeviceManager::init_d3d11() {
     nvrhi::DeviceHandle nvrhi_validation_layer = nvrhi::validation::createValidationLayer(nvrhi_device);
     nvrhi_device = nvrhi_validation_layer;
 #endif
+
+    auto texture_desc = nvrhi::TextureDesc()
+                            .setDimension(nvrhi::TextureDimension::Texture2D)
+                            .setFormat(nvrhi::Format::RGBA8_UNORM)
+                            .setWidth(width_height.x)
+                            .setHeight(width_height.y)
+                            .setIsRenderTarget(true)
+                            .setDebugName("Swap Chain Image");
+
+    nvrhi::TextureHandle swap_chain_texture =
+        nvrhi_device->createHandleForNativeTexture(nvrhi::ObjectTypes::D3D11_Resource, back_buffer, texture_desc);
+
+    back_buffer->Release();
 }
 
-void DeviceManager::swap_d3d11() { SwapChain->Present(0, 0); }
+void DeviceManager::swap_d3d11() { swap_chain->Present(0, 0); }
 
 void DeviceManager::upload_meshdata(MeshData &mesh_data) {
     LOG_DEBUG("updating mesh_data: {}", mesh_data.debug_name);
