@@ -227,10 +227,7 @@ void DeviceManager::finish_main_pass() {
 
     swap_d3d11();
 
-    // sg_end_pass();
-    // sg_commit();
-
-    // collect_gargabe();
+    nvrhi_device->runGarbageCollection();
 }
 
 } // namespace reach
