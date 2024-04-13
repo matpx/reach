@@ -11,6 +11,15 @@ namespace reach::render_system {
 
 void post_update() {
     auto &world = World::current();
+    for (auto [entity, material, mesh] : world.view<MaterialComponent, MeshComponent>().each()) {
+        if (material.graphics_pipeline == nullptr) {
+            material = MaterialManager::get().unlit_material;
+        }
+
+        if (!mesh.mesh_data->is_uploaded()) {
+            DeviceManager::get().upload_meshdata(*mesh.mesh_data);
+        }
+    }
 
     DeviceManager::get().begin_main_pass();
 
@@ -23,18 +32,6 @@ void post_update() {
 
     for (auto [entity, transform, material, mesh] : world.view<TransformComponent, MaterialComponent, MeshComponent>().each()) {
         const glm::mat4 model_view_projection = view_projection * transform.world;
-
-        if (!mesh.visible) {
-            continue;
-        }
-
-        // if (material.pipeline.id == SG_INVALID_ID) {
-        //     material = MaterialManager::get().unlit_material;
-        // }
-
-        if (!mesh.mesh_data->is_uploaded()) {
-            DeviceManager::get().upload_meshdata(*mesh.mesh_data);
-        }
 
         DeviceManager::get().draw_mesh(model_view_projection, material, mesh);
     }

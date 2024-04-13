@@ -9,7 +9,7 @@ shader_make = find_program('ShaderMake', dirs : [join_paths(meson.current_source
 shader_make_target = custom_target(
     'shader_make',
     build_always: true,
-    output : ['fake'],
+    output : ['unlit_main_ps.dxbc', 'unlit_main_vs.dxbc', 'immediate_main_ps.dxbc', 'immediate_main_vs.dxbc'],
     command : [shader_make, '--compiler', '@CURRENT_SOURCE_DIR@/tools/ShaderMake/fxc.exe', '-c', '@CURRENT_SOURCE_DIR@/src/shader/shader.cfg', '-o', '@BUILD_ROOT@', '--header', '-p', 'DXBC'])
 
 # main executable

@@ -24,9 +24,9 @@ class DeviceManager final : public Manager {
     private:
         bool pass_is_active = false;
 
-        IDXGISwapChain *swap_chain;
         ID3D11Device *d3d11_device;
         ID3D11DeviceContext *d3d11_device_context;
+        IDXGISwapChain *swap_chain;
         ID3D11RenderTargetView *renderTargetView;
         ID3D11Texture2D *back_buffer;
         ID3D11Texture2D *depth_stencil;
@@ -35,6 +35,8 @@ class DeviceManager final : public Manager {
         nvrhi::TextureHandle swap_chain_texture;
         nvrhi::TextureHandle depth_texture;
         nvrhi::FramebufferHandle framebuffer;
+        nvrhi::BufferHandle transform_constant_buffer;
+        nvrhi::CommandListHandle frame_command_list;
 
         void init_d3d11(const glm::ivec2 &width_height);
         void init_nvrhi(const glm::ivec2 &width_height);
@@ -58,6 +60,7 @@ class DeviceManager final : public Manager {
 
         [[nodiscard]] nvrhi::DeviceHandle &get_nvrhi_device() { return nvrhi_device; }
         [[nodiscard]] nvrhi::FramebufferHandle &get_nvrhi_framebuffer() { return framebuffer; }
+        [[nodiscard]] nvrhi::BufferHandle &get_transform_constant_buffer() { return transform_constant_buffer; }
 };
 
 } // namespace reach

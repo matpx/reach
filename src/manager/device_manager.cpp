@@ -2,9 +2,11 @@
 #include <components/mesh_component.hpp>
 #include <components/transform_component.hpp>
 #include <data/mesh_data.hpp>
+#include <gtc/type_ptr.hpp>
 #include <manager/device_manager.hpp>
 #include <manager/window_manager.hpp>
 #include <nvrhi/d3d11.h>
+#include <nvrhi/utils.h>
 #include <nvrhi/validation.h>
 #include <utils/conditions.hpp>
 
@@ -40,10 +42,12 @@ DeviceManager::DeviceManager() {
 DeviceManager::~DeviceManager() {
     PRECONDITION(self != nullptr);
 
+    depth_stencil->Release();
     back_buffer->Release();
+    renderTargetView->Release();
     swap_chain->Release();
-    d3d11_device->Release();
     d3d11_device_context->Release();
+    d3d11_device->Release();
 
     self = nullptr;
 }
@@ -152,38 +156,87 @@ void DeviceManager::init_nvrhi(const glm::ivec2 &width_height) {
 
     const auto framebufferDesc = nvrhi::FramebufferDesc().addColorAttachment(swap_chain_texture).setDepthAttachment(depth_texture);
     framebuffer = nvrhi_device->createFramebuffer(framebufferDesc);
+
+    const auto transform_constant_buffer_desc = nvrhi::BufferDesc()
+                                                    .setByteSize(sizeof(glm::mat4::value_type) * 16)
+                                                    .setIsConstantBuffer(true)
+                                                    .setIsVolatile(true)
+                                                    .setMaxVersions(16);
+    transform_constant_buffer = nvrhi_device->createBuffer(transform_constant_buffer_desc);
+
+    frame_command_list = nvrhi_device->createCommandList();
 }
 
 void DeviceManager::swap_d3d11() { swap_chain->Present(0, 0); }
 
 void DeviceManager::upload_meshdata(MeshData &mesh_data) {
+    PRECONDITION(pass_is_active == false);
+
     LOG_DEBUG("updating mesh_data: {}", mesh_data.debug_name);
 
-    // mesh_data.vertex_buffer =
-    //     sg_make_buffer(sg_buffer_desc{.data = {
-    //                                       .ptr = mesh_data.vertex_data.data(),
-    //                                       .size = mesh_data.vertex_data.size() * sizeof(decltype(mesh_data.vertex_data)::value_type),
-    //                                   }});
+    const size_t vertex_buffer_bytesize = mesh_data.vertex_data.size() * sizeof(decltype(mesh_data.vertex_data)::value_type);
+    auto vertex_buffer_desc = nvrhi::BufferDesc()
+                                  .setByteSize(vertex_buffer_bytesize)
+                                  .setIsVertexBuffer(true)
+                                  .setInitialState(nvrhi::ResourceStates::VertexBuffer)
+                                  .setKeepInitialState(true)
+                                  .setDebugName("Vertex Buffer");
 
-    // mesh_data.index_buffer =
-    //     sg_make_buffer(sg_buffer_desc{.type = SG_BUFFERTYPE_INDEXBUFFER,
-    //                                   .data = {
-    //                                       .ptr = mesh_data.index_data.data(),
-    //                                       .size = mesh_data.index_data.size() * sizeof(decltype(mesh_data.index_data)::value_type),
-    //                                   }});
+    mesh_data.vertex_buffer = nvrhi_device->createBuffer(vertex_buffer_desc);
+
+    const size_t index_buffer_bytesize = mesh_data.index_data.size() * sizeof(decltype(mesh_data.index_data)::value_type);
+    auto index_buffer_desc = nvrhi::BufferDesc()
+                                 .setByteSize(index_buffer_bytesize)
+                                 .setIsIndexBuffer(true)
+                                 .setInitialState(nvrhi::ResourceStates::IndexBuffer)
+                                 .setKeepInitialState(true)
+                                 .setDebugName("Index Buffer");
+
+    mesh_data.index_buffer = nvrhi_device->createBuffer(index_buffer_desc);
+
+    nvrhi::CommandListHandle upload_command_list = nvrhi_device->createCommandList();
+    upload_command_list->open();
+    upload_command_list->writeBuffer(mesh_data.vertex_buffer, mesh_data.vertex_data.data(), vertex_buffer_bytesize);
+    upload_command_list->writeBuffer(mesh_data.index_buffer, mesh_data.index_data.data(), index_buffer_bytesize);
+    upload_command_list->close();
+    nvrhi_device->executeCommandList(upload_command_list);
 }
 
 void DeviceManager::begin_main_pass() {
     PRECONDITION(pass_is_active == false);
 
-    // const glm::ivec2 width_height = WindowManager::get().get_framebuffer_width_height();
-
     pass_is_active = true;
+
+    frame_command_list->open();
+
+    nvrhi::utils::ClearColorAttachment(frame_command_list, framebuffer, 0, nvrhi::Color(1.0f));
+    nvrhi::utils::ClearDepthStencilAttachment(frame_command_list, framebuffer, 1.0f, 0);
 }
 
 void DeviceManager::draw_mesh(const glm::mat4 &model_view_projection, const MaterialComponent &material_component,
                               const MeshComponent &mesh_component) {
     PRECONDITION(pass_is_active == true);
+
+    std::span<const float> model_view_projection_ptr(glm::value_ptr(model_view_projection), 4 * 4);
+    frame_command_list->writeBuffer(transform_constant_buffer, model_view_projection_ptr.data(), model_view_projection_ptr.size_bytes());
+
+    const glm::ivec2 width_height = WindowManager::get().get_window_width_height();
+    const auto graphics_state =
+        nvrhi::GraphicsState()
+            .setFramebuffer(framebuffer)
+            .setViewport(nvrhi::ViewportState().addViewportAndScissorRect(
+                nvrhi::Viewport(static_cast<float>(width_height.x), static_cast<float>(width_height.y))))
+            .setPipeline(material_component.graphics_pipeline)
+            .addBindingSet(material_component.binding_set)
+            .addVertexBuffer(nvrhi::VertexBufferBinding().setBuffer(mesh_component.mesh_data->vertex_buffer))
+            .setIndexBuffer(
+                nvrhi::IndexBufferBinding().setBuffer(mesh_component.mesh_data->index_buffer).setFormat(nvrhi::Format::R32_UINT));
+
+    frame_command_list->setGraphicsState(graphics_state);
+
+    const auto draw_arguments =
+        nvrhi::DrawArguments().setVertexCount(mesh_component.index_count).setStartIndexLocation(mesh_component.index_offset);
+    frame_command_list->drawIndexed(draw_arguments);
 }
 
 void DeviceManager::draw_immediate(const glm::mat4 &projection, const std::span<const Vertex2D> vertex_data,
@@ -223,11 +276,14 @@ void DeviceManager::draw_immediate(const glm::mat4 &projection, const std::span<
 void DeviceManager::finish_main_pass() {
     PRECONDITION(pass_is_active == true);
 
-    pass_is_active = false;
+    frame_command_list->close();
+    nvrhi_device->executeCommandList(frame_command_list);
 
     swap_d3d11();
 
     nvrhi_device->runGarbageCollection();
+
+    pass_is_active = false;
 }
 
 } // namespace reach

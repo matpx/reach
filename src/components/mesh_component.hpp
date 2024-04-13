@@ -9,8 +9,6 @@ namespace reach {
 struct MeshComponent {
         std::string_view debug_name = "<unnamed MeshComponent>";
 
-        bool visible = true;
-
         std::shared_ptr<MeshData> mesh_data;
 
         uint32_t index_count;

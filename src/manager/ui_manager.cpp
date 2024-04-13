@@ -28,12 +28,12 @@ UiManager::UiManager() {
         nvrhi::VertexAttributeDesc attributes[] = {
             nvrhi::VertexAttributeDesc()
                 .setName("POSITION")
-                .setFormat(nvrhi::Format::RG16_FLOAT)
+                .setFormat(nvrhi::Format::RG32_FLOAT)
                 .setOffset(offsetof(Vertex2D, position))
                 .setElementStride(sizeof(Vertex2D)),
             nvrhi::VertexAttributeDesc()
                 .setName("COLOR")
-                .setFormat(nvrhi::Format::RGB32_FLOAT)
+                .setFormat(nvrhi::Format::RGBA32_FLOAT)
                 .setOffset(offsetof(Vertex2D, color))
                 .setElementStride(sizeof(Vertex2D)),
         };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <nvrhi/nvrhi.h>
 #include <stdint.h>
 #include <string_view>
 #include <utils/nocopy.hpp>
@@ -35,7 +36,10 @@ struct MeshData {
         std::vector<Vertex3D> vertex_data;
         std::vector<MeshIndex> index_data;
 
-        [[nodiscard]] constexpr bool is_uploaded() { return true; }
+        nvrhi::BufferHandle vertex_buffer;
+        nvrhi::BufferHandle index_buffer;
+
+        [[nodiscard]] bool is_uploaded() { return vertex_buffer != nullptr; }
 };
 
 } // namespace reach
