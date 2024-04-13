@@ -29,7 +29,10 @@ DeviceManager &DeviceManager::get() { return *self; }
 DeviceManager::DeviceManager() {
     PRECONDITION(self == nullptr);
 
-    init_d3d11();
+    const glm::ivec2 width_height = WindowManager::get().get_window_width_height();
+
+    init_d3d11(width_height);
+    init_nvrhi(width_height);
 
     self = this;
 }
@@ -37,6 +40,7 @@ DeviceManager::DeviceManager() {
 DeviceManager::~DeviceManager() {
     PRECONDITION(self != nullptr);
 
+    back_buffer->Release();
     swap_chain->Release();
     d3d11_device->Release();
     d3d11_device_context->Release();
@@ -44,8 +48,7 @@ DeviceManager::~DeviceManager() {
     self = nullptr;
 }
 
-void DeviceManager::init_d3d11() {
-    const glm::ivec2 width_height = WindowManager::get().get_window_width_height();
+void DeviceManager::init_d3d11(const glm::ivec2 &width_height) {
     HWND hwnd = glfwGetWin32Window(WindowManager::get().get_glfw_window());
 
     DXGI_MODE_DESC buffer_desc;
@@ -60,7 +63,6 @@ void DeviceManager::init_d3d11() {
     buffer_desc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
     DXGI_SWAP_CHAIN_DESC swap_chain_desc;
-
     ZeroMemory(&swap_chain_desc, sizeof(DXGI_SWAP_CHAIN_DESC));
 
     swap_chain_desc.BufferDesc = buffer_desc;
@@ -83,7 +85,6 @@ void DeviceManager::init_d3d11() {
                                                &swap_chain_desc, &swap_chain, &d3d11_device, NULL, &d3d11_device_context);
     POSTCONDITION(SUCCEEDED(hr));
 
-    ID3D11Texture2D *back_buffer;
     hr = swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void **)&back_buffer);
     POSTCONDITION(SUCCEEDED(hr));
 
@@ -92,13 +93,32 @@ void DeviceManager::init_d3d11() {
 
     d3d11_device_context->OMSetRenderTargets(1, &renderTargetView, NULL);
 
+    depth_stencil = nullptr;
+    D3D11_TEXTURE2D_DESC depth_desc;
+    depth_desc.Width = buffer_desc.Width;
+    depth_desc.Height = buffer_desc.Height;
+    depth_desc.MipLevels = 1;
+    depth_desc.ArraySize = 1;
+    depth_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depth_desc.SampleDesc.Count = 1;
+    depth_desc.SampleDesc.Quality = 0;
+    depth_desc.Usage = D3D11_USAGE_DEFAULT;
+    depth_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    depth_desc.CPUAccessFlags = 0;
+    depth_desc.MiscFlags = 0;
+
+    hr = d3d11_device->CreateTexture2D(&depth_desc, NULL, &depth_stencil);
+    POSTCONDITION(SUCCEEDED(hr));
+}
+
+void DeviceManager::init_nvrhi(const glm::ivec2 &width_height) {
     static MessageCallback message_callback;
 
     nvrhi::d3d11::DeviceDesc device_desc;
     device_desc.messageCallback = static_cast<nvrhi::IMessageCallback *>(&message_callback);
     device_desc.context = d3d11_device_context;
 
-    nvrhi::DeviceHandle nvrhi_device = nvrhi::d3d11::createDevice(device_desc);
+    nvrhi_device = nvrhi::d3d11::createDevice(device_desc);
 
 #ifndef NDEBUG
     LOG_INFO("enable nvrhi validation");
@@ -106,18 +126,32 @@ void DeviceManager::init_d3d11() {
     nvrhi_device = nvrhi_validation_layer;
 #endif
 
-    auto texture_desc = nvrhi::TextureDesc()
-                            .setDimension(nvrhi::TextureDimension::Texture2D)
-                            .setFormat(nvrhi::Format::RGBA8_UNORM)
-                            .setWidth(width_height.x)
-                            .setHeight(width_height.y)
-                            .setIsRenderTarget(true)
-                            .setDebugName("Swap Chain Image");
+    const auto swap_chain_texture_desc = nvrhi::TextureDesc()
+                                             .setDimension(nvrhi::TextureDimension::Texture2D)
+                                             .setFormat(nvrhi::Format::RGBA8_UNORM)
+                                             .setWidth(width_height.x)
+                                             .setHeight(width_height.y)
+                                             .setIsRenderTarget(true)
+                                             .setDebugName("Swap Chain Image");
 
-    nvrhi::TextureHandle swap_chain_texture =
-        nvrhi_device->createHandleForNativeTexture(nvrhi::ObjectTypes::D3D11_Resource, back_buffer, texture_desc);
+    swap_chain_texture =
+        nvrhi_device->createHandleForNativeTexture(nvrhi::ObjectTypes::D3D11_Resource, back_buffer, swap_chain_texture_desc);
 
-    back_buffer->Release();
+    const auto depth_texture_desc = nvrhi::TextureDesc()
+                                        .setWidth(static_cast<uint32_t>(width_height.x))
+                                        .setHeight(static_cast<uint32_t>(width_height.y))
+                                        .setFormat(nvrhi::Format::D24S8)
+                                        .setDimension(nvrhi::TextureDimension::Texture2D)
+                                        .setDebugName("Depth Buffer")
+                                        .setIsRenderTarget(true)
+                                        .setUseClearValue(true)
+                                        .setInitialState(nvrhi::ResourceStates::DepthWrite)
+                                        .setKeepInitialState(true);
+
+    depth_texture = nvrhi_device->createHandleForNativeTexture(nvrhi::ObjectTypes::D3D11_Resource, depth_stencil, depth_texture_desc);
+
+    const auto framebufferDesc = nvrhi::FramebufferDesc().addColorAttachment(swap_chain_texture).setDepthAttachment(depth_texture);
+    framebuffer = nvrhi_device->createFramebuffer(framebufferDesc);
 }
 
 void DeviceManager::swap_d3d11() { swap_chain->Present(0, 0); }

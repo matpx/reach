@@ -1,5 +1,13 @@
+#include <manager/device_manager.hpp>
 #include <manager/material_manager.hpp>
+#include <nvrhi/nvrhi.h>
 #include <utils/conditions.hpp>
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include "unlit_main_ps.dxbc.h"
+#include "unlit_main_vs.dxbc.h"
 
 namespace reach {
 
@@ -11,24 +19,42 @@ MaterialManager::MaterialManager() {
     PRECONDITION(self == nullptr);
 
     {
-        // const sg_shader unlit_shader = sg_make_shader(unlit_unlit_shader_desc(sg_query_backend()));
-        // POSTCONDITION(unlit_shader.id != SG_INVALID_ID);
+        auto &nvrhi_device = DeviceManager::get().get_nvrhi_device();
+        auto &framebuffer = DeviceManager::get().get_nvrhi_framebuffer();
 
-        // sg_pipeline_desc unlit_pipeline_desc = {};
-        // unlit_pipeline_desc.layout.attrs[ATTR_unlit_vs_position].format = SG_VERTEXFORMAT_FLOAT3;
-        // unlit_pipeline_desc.layout.attrs[ATTR_unlit_vs_normal].format = SG_VERTEXFORMAT_FLOAT3;
-        // unlit_pipeline_desc.shader = unlit_shader;
-        // unlit_pipeline_desc.index_type = SG_INDEXTYPE_UINT32;
-        // unlit_pipeline_desc.cull_mode = SG_CULLMODE_BACK;
-        // unlit_pipeline_desc.face_winding = SG_FACEWINDING_CCW;
-        // unlit_pipeline_desc.depth.compare = SG_COMPAREFUNC_LESS_EQUAL;
-        // unlit_pipeline_desc.depth.write_enabled = true;
-        // unlit_pipeline_desc.label = "unlit pipeline";
+        nvrhi::ShaderHandle vertex_shader =
+            nvrhi_device->createShader(nvrhi::ShaderDesc(nvrhi::ShaderType::Vertex), g_unlit_main_vs_dxbc, sizeof(g_unlit_main_vs_dxbc));
 
-        // unlit_material.pipeline = sg_make_pipeline(unlit_pipeline_desc);
-        // POSTCONDITION(unlit_material.pipeline.id != SG_INVALID_ID);
+        nvrhi::VertexAttributeDesc attributes[] = {
+            nvrhi::VertexAttributeDesc()
+                .setName("POSITION")
+                .setFormat(nvrhi::Format::RGB32_FLOAT)
+                .setOffset(offsetof(Vertex3D, position))
+                .setElementStride(sizeof(Vertex3D)),
+            nvrhi::VertexAttributeDesc()
+                .setName("NORMAL")
+                .setFormat(nvrhi::Format::RGB32_FLOAT)
+                .setOffset(offsetof(Vertex3D, normal))
+                .setElementStride(sizeof(Vertex3D)),
+        };
 
-        // unlit_material.uniform_transform_slot = static_cast<uint8_t>(unlit_unlit_uniformblock_slot(SG_SHADERSTAGE_VS, "transform_params"));
+        nvrhi::InputLayoutHandle input_layout = nvrhi_device->createInputLayout(attributes, uint32_t(std::size(attributes)), vertex_shader);
+
+        nvrhi::ShaderHandle pixel_shader =
+            nvrhi_device->createShader(nvrhi::ShaderDesc(nvrhi::ShaderType::Pixel), g_unlit_main_ps_dxbc, sizeof(g_unlit_main_ps_dxbc));
+
+        auto binding_layout_desc =
+            nvrhi::BindingLayoutDesc().setVisibility(nvrhi::ShaderType::All).addItem(nvrhi::BindingLayoutItem::VolatileConstantBuffer(0));
+
+        nvrhi::BindingLayoutHandle binding_layout = nvrhi_device->createBindingLayout(binding_layout_desc);
+
+        const auto pipeline_desc = nvrhi::GraphicsPipelineDesc()
+                                       .setInputLayout(input_layout)
+                                       .setVertexShader(vertex_shader)
+                                       .setPixelShader(pixel_shader)
+                                       .addBindingLayout(binding_layout);
+
+        nvrhi::GraphicsPipelineHandle graphicsPipeline = nvrhi_device->createGraphicsPipeline(pipeline_desc, framebuffer);
     }
 
     self = this;

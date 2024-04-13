@@ -4,6 +4,12 @@
 #include <utils/conditions.hpp>
 #include <world.hpp>
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include "immediate_main_ps.dxbc.h"
+#include "immediate_main_vs.dxbc.h"
+
 namespace reach {
 
 static UiManager *self = nullptr;
@@ -14,23 +20,28 @@ UiManager::UiManager() {
     PRECONDITION(self == nullptr);
 
     {
-        // const sg_shader immediate_shader = sg_make_shader(immediate_immediate_shader_desc(sg_query_backend()));
-        // POSTCONDITION(immediate_shader.id != SG_INVALID_ID);
+        auto &nvrhi_device = DeviceManager::get().get_nvrhi_device();
 
-        // sg_pipeline_desc immediate_pipeline_desc = {};
-        // immediate_pipeline_desc.layout.attrs[ATTR_immediate_vs_position].format = SG_VERTEXFORMAT_FLOAT2;
-        // immediate_pipeline_desc.layout.attrs[ATTR_immediate_vs_color].format = SG_VERTEXFORMAT_FLOAT4;
-        // immediate_pipeline_desc.shader = immediate_shader;
-        // immediate_pipeline_desc.index_type = SG_INDEXTYPE_NONE;
-        // immediate_pipeline_desc.cull_mode = SG_CULLMODE_NONE;
-        // immediate_pipeline_desc.depth.write_enabled = false;
-        // immediate_pipeline_desc.label = "immediate pipeline";
+        nvrhi::ShaderHandle vertexShader = nvrhi_device->createShader(nvrhi::ShaderDesc(nvrhi::ShaderType::Vertex),
+                                                                      g_immediate_main_vs_dxbc, sizeof(g_immediate_main_vs_dxbc));
 
-        // immediate_material.pipeline = sg_make_pipeline(immediate_pipeline_desc);
-        // POSTCONDITION(immediate_material.pipeline.id != SG_INVALID_ID);
+        nvrhi::VertexAttributeDesc attributes[] = {
+            nvrhi::VertexAttributeDesc()
+                .setName("POSITION")
+                .setFormat(nvrhi::Format::RG16_FLOAT)
+                .setOffset(offsetof(Vertex2D, position))
+                .setElementStride(sizeof(Vertex2D)),
+            nvrhi::VertexAttributeDesc()
+                .setName("COLOR")
+                .setFormat(nvrhi::Format::RGB32_FLOAT)
+                .setOffset(offsetof(Vertex2D, color))
+                .setElementStride(sizeof(Vertex2D)),
+        };
 
-        // immediate_material.uniform_transform_slot =
-        //     static_cast<uint8_t>(immediate_immediate_uniformblock_slot(SG_SHADERSTAGE_VS, "transform_params"));
+        nvrhi::InputLayoutHandle inputLayout = nvrhi_device->createInputLayout(attributes, uint32_t(std::size(attributes)), vertexShader);
+
+        nvrhi::ShaderHandle pixelShader = nvrhi_device->createShader(nvrhi::ShaderDesc(nvrhi::ShaderType::Pixel), g_immediate_main_ps_dxbc,
+                                                                     sizeof(g_immediate_main_ps_dxbc));
     }
 
     self = this;
