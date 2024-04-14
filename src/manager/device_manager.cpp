@@ -82,6 +82,7 @@ void DeviceManager::init_d3d11(const glm::ivec2 &width_height) {
 
 #ifndef NDEBUG
     LOG_INFO("enable d3d11 D3D11_CREATE_DEVICE_DEBUG");
+
     device_flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
@@ -126,6 +127,7 @@ void DeviceManager::init_nvrhi(const glm::ivec2 &width_height) {
 
 #ifndef NDEBUG
     LOG_INFO("enable nvrhi validation");
+
     nvrhi::DeviceHandle nvrhi_validation_layer = nvrhi::validation::createValidationLayer(nvrhi_device);
     nvrhi_device = nvrhi_validation_layer;
 #endif
