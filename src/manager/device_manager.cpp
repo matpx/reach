@@ -241,36 +241,40 @@ void DeviceManager::draw_mesh(const glm::mat4 &model_view_projection, const Mate
 
 void DeviceManager::draw_immediate(const glm::mat4 &projection, const std::span<const Vertex2D> vertex_data,
                                    const MaterialComponent &material_component) {
-    // const std::size_t required_byte_size = vertex_data.size() * sizeof(decltype(vertex_data)::value_type);
 
-    // if (immediate_buffer_desc.size < required_byte_size) {
-    //     LOG_DEBUG("destroy immediate buffer because immediate_buffer_desc.size < required_byte_size");
+    const size_t required_bytesize = vertex_data.size_bytes();
 
-    //     sg_destroy_buffer(immediate_buffer);
+    if (immediate_vertex_buffer == nullptr || immediate_vertex_buffer->getDesc().byteSize < required_bytesize) {
+        LOG_DEBUG("recreate immediate_vertex_buffer");
 
-    //     immediate_buffer = {};
-    //     immediate_buffer_desc = {};
-    // }
+        auto vertex_buffer_desc = nvrhi::BufferDesc()
+                                      .setByteSize(required_bytesize)
+                                      .setIsVertexBuffer(true)
+                                      .setInitialState(nvrhi::ResourceStates::VertexBuffer)
+                                      .setKeepInitialState(true)
+                                      .setDebugName("Immediate Vertex Buffer");
 
-    // if (immediate_buffer.id == SG_INVALID_ID) {
-    //     LOG_DEBUG("create immediate buffer");
+        immediate_vertex_buffer = nvrhi_device->createBuffer(vertex_buffer_desc);
+    }
 
-    //     immediate_buffer_desc.data.size = required_byte_size;
-    //     immediate_buffer_desc.usage = SG_USAGE_STREAM;
+    frame_command_list->writeBuffer(immediate_vertex_buffer, vertex_data.data(), required_bytesize);
 
-    //     immediate_buffer = sg_make_buffer(immediate_buffer_desc);
-    //     immediate_buffer_desc.size = required_byte_size;
-    // }
+    std::span<const float> model_view_projection_ptr(glm::value_ptr(projection), 4 * 4);
+    frame_command_list->writeBuffer(transform_constant_buffer, model_view_projection_ptr.data(), model_view_projection_ptr.size_bytes());
 
-    // sg_update_buffer(immediate_buffer, sg_range{.ptr = vertex_data.data(), .size = required_byte_size});
+    const glm::ivec2 width_height = WindowManager::get().get_window_width_height();
+    const auto graphics_state = nvrhi::GraphicsState()
+                                    .setFramebuffer(framebuffer)
+                                    .setViewport(nvrhi::ViewportState().addViewportAndScissorRect(
+                                        nvrhi::Viewport(static_cast<float>(width_height.x), static_cast<float>(width_height.y))))
+                                    .setPipeline(material_component.graphics_pipeline)
+                                    .addBindingSet(material_component.binding_set)
+                                    .addVertexBuffer(nvrhi::VertexBufferBinding().setBuffer(immediate_vertex_buffer));
 
-    // sg_apply_pipeline(material_component.pipeline);
-    // sg_apply_uniforms(SG_SHADERSTAGE_VS, material_component.uniform_transform_slot, SG_RANGE(projection));
-    // sg_apply_bindings(sg_bindings{
-    //     .vertex_buffers = {immediate_buffer},
-    // });
+    frame_command_list->setGraphicsState(graphics_state);
 
-    // sg_draw(0, static_cast<int32_t>(vertex_data.size()), 1);
+    const auto draw_arguments = nvrhi::DrawArguments().setVertexCount(static_cast<uint32_t>(vertex_data.size()));
+    frame_command_list->draw(draw_arguments);
 }
 
 void DeviceManager::finish_main_pass() {

@@ -24,6 +24,8 @@ MaterialManager::MaterialManager() {
 
         nvrhi::ShaderHandle vertex_shader =
             nvrhi_device->createShader(nvrhi::ShaderDesc(nvrhi::ShaderType::Vertex), g_unlit_main_vs_dxbc, sizeof(g_unlit_main_vs_dxbc));
+        nvrhi::ShaderHandle pixel_shader =
+            nvrhi_device->createShader(nvrhi::ShaderDesc(nvrhi::ShaderType::Pixel), g_unlit_main_ps_dxbc, sizeof(g_unlit_main_ps_dxbc));
 
         nvrhi::VertexAttributeDesc attributes[] = {
             nvrhi::VertexAttributeDesc()
@@ -39,9 +41,6 @@ MaterialManager::MaterialManager() {
         };
 
         nvrhi::InputLayoutHandle input_layout = nvrhi_device->createInputLayout(attributes, uint32_t(std::size(attributes)), vertex_shader);
-
-        nvrhi::ShaderHandle pixel_shader =
-            nvrhi_device->createShader(nvrhi::ShaderDesc(nvrhi::ShaderType::Pixel), g_unlit_main_ps_dxbc, sizeof(g_unlit_main_ps_dxbc));
 
         auto binding_layout_desc = nvrhi::BindingLayoutDesc()
                                        .setVisibility(nvrhi::ShaderType::Vertex)

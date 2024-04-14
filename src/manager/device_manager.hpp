@@ -37,6 +37,7 @@ class DeviceManager final : public Manager {
         nvrhi::FramebufferHandle framebuffer;
         nvrhi::BufferHandle transform_constant_buffer;
         nvrhi::CommandListHandle frame_command_list;
+        nvrhi::BufferHandle immediate_vertex_buffer;
 
         void init_d3d11(const glm::ivec2 &width_height);
         void init_nvrhi(const glm::ivec2 &width_height);
