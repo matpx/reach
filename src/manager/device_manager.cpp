@@ -21,7 +21,7 @@
 namespace reach {
 
 class MessageCallback final : public nvrhi::IMessageCallback {
-        virtual void message(nvrhi::MessageSeverity severity, const char *messageText) { LOG_ERROR(messageText); };
+        virtual void message([[maybe_unused]] nvrhi::MessageSeverity severity, const char *messageText) { LOG_ERROR(messageText); };
 };
 
 static DeviceManager *self = nullptr;
