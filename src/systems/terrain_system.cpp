@@ -5,6 +5,7 @@
 #include <rjm_mc.h>
 #include <span>
 #include <systems/terrain_system.hpp>
+#include <utils/log.hpp>
 #include <world.hpp>
 
 namespace reach::terrain_system {
@@ -17,46 +18,48 @@ static float iso(const float *pos, float * /*extra*/, void * /*userparam*/) {
 }
 
 void update() {
-    static bool first_run = true;
+    auto &world = World::current();
 
-    if (first_run) {
-        first_run = false;
-
-        std::shared_ptr<MeshData> mesh_data = std::make_shared<MeshData>();
-
-        mesh_data->debug_name = "terrain chunk data";
-
-        const float bmin[3] = {-planet_max_radius / 2, -planet_max_radius / 2, -planet_max_radius / 2};
-        const float bmax[3] = {+planet_max_radius / 2, +planet_max_radius / 2, +planet_max_radius / 2};
-        const float resolution = planet_max_radius / 20.0f;
-
-        McMesh mc_mesh = mcGenerate(bmin, bmax, resolution, iso, nullptr);
-
-        const auto _ = gsl::finally([&mc_mesh]() { mcFree(&mc_mesh); });
-
-        for (const McVertex &vert : std::span<McVertex>(mc_mesh.verts, mc_mesh.nverts)) {
-            mesh_data->vertex_data.push_back(Vertex3D{
-                .position = {vert.x, vert.y, vert.z},
-                .normal = {vert.nx, vert.ny, vert.nz},
-            });
-        }
-
-        for (const int &index : std::span<int>(mc_mesh.indices, mc_mesh.ntris * 3)) {
-            mesh_data->index_data.push_back(index);
-        }
-
-        MeshComponent mesh_comp = {
-            .debug_name = "terrain chunk",
-            .mesh_data = mesh_data,
-            .index_count = static_cast<uint32_t>(mesh_data->index_data.size()),
-            .index_offset = 0,
-        };
-
-        const entt::entity chunk = World::current().create();
-        World::current().emplace<TransformComponent>(chunk, TransformComponent{});
-        World::current().emplace<MaterialComponent>(chunk, MaterialComponent{});
-        World::current().emplace<MeshComponent>(chunk, mesh_comp);
+    if (world.terrain_root != entt::null) {
+        return;
     }
+
+    LOG_DEBUG("generating terrain chunk");
+
+    std::shared_ptr<MeshData> mesh_data = std::make_shared<MeshData>();
+
+    mesh_data->debug_name = "terrain chunk data";
+
+    const float bmin[3] = {-planet_max_radius / 2, -planet_max_radius / 2, -planet_max_radius / 2};
+    const float bmax[3] = {+planet_max_radius / 2, +planet_max_radius / 2, +planet_max_radius / 2};
+    const float resolution = planet_max_radius / 20.0f;
+
+    McMesh mc_mesh = mcGenerate(bmin, bmax, resolution, iso, nullptr);
+
+    const auto _ = gsl::finally([&mc_mesh]() { mcFree(&mc_mesh); });
+
+    for (const McVertex &vert : std::span<McVertex>(mc_mesh.verts, mc_mesh.nverts)) {
+        mesh_data->vertex_data.push_back(Vertex3D{
+            .position = {vert.x, vert.y, vert.z},
+            .normal = {vert.nx, vert.ny, vert.nz},
+        });
+    }
+
+    for (const int &index : std::span<int>(mc_mesh.indices, mc_mesh.ntris * 3)) {
+        mesh_data->index_data.push_back(index);
+    }
+
+    MeshComponent mesh_comp = {
+        .debug_name = "terrain chunk",
+        .mesh_data = mesh_data,
+        .index_count = static_cast<uint32_t>(mesh_data->index_data.size()),
+        .index_offset = 0,
+    };
+
+    world.terrain_root = world.create();
+    world.emplace<TransformComponent>(world.terrain_root, TransformComponent{});
+    world.emplace<MaterialComponent>(world.terrain_root, MaterialComponent{});
+    world.emplace<MeshComponent>(world.terrain_root, mesh_comp);
 }
 
 } // namespace reach::terrain_system

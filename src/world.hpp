@@ -13,6 +13,7 @@ class World : public entt::registry, NoCopy {
         ~World();
 
         entt::entity current_camera = entt::null;
+        entt::entity terrain_root = entt::null;
 };
 
 } // namespace reach

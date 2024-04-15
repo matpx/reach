@@ -22,6 +22,8 @@ MaterialManager::MaterialManager() {
         auto &nvrhi_device = DeviceManager::get().get_nvrhi_device();
         auto &framebuffer = DeviceManager::get().get_nvrhi_framebuffer();
 
+        LOG_INFO("init standard material pipeline");
+
         nvrhi::ShaderHandle vertex_shader =
             nvrhi_device->createShader(nvrhi::ShaderDesc(nvrhi::ShaderType::Vertex), g_unlit_main_vs_dxbc, sizeof(g_unlit_main_vs_dxbc));
         nvrhi::ShaderHandle pixel_shader =

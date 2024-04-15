@@ -31,6 +31,8 @@ DeviceManager &DeviceManager::get() { return *self; }
 DeviceManager::DeviceManager() {
     PRECONDITION(self == nullptr);
 
+    LOG_INFO("init device");
+
     const glm::ivec2 width_height = WindowManager::get().get_window_width_height();
 
     init_d3d11(width_height);
@@ -78,15 +80,15 @@ void DeviceManager::init_d3d11(const glm::ivec2 &width_height) {
     swap_chain_desc.Windowed = TRUE;
     swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-    UINT device_flags = 0;
+    UINT d3d11_device_flags = 0;
 
 #ifndef NDEBUG
-    LOG_INFO("enable d3d11 D3D11_CREATE_DEVICE_DEBUG");
+    LOG_INFO("set d3d11_device_flags = D3D11_CREATE_DEVICE_DEBUG");
 
-    device_flags |= D3D11_CREATE_DEVICE_DEBUG;
+    d3d11_device_flags = D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-    HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, device_flags, NULL, NULL, D3D11_SDK_VERSION,
+    HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, d3d11_device_flags, NULL, NULL, D3D11_SDK_VERSION,
                                                &swap_chain_desc, &swap_chain, &d3d11_device, NULL, &d3d11_device_context);
     POSTCONDITION(SUCCEEDED(hr));
 
@@ -126,7 +128,7 @@ void DeviceManager::init_nvrhi(const glm::ivec2 &width_height) {
     nvrhi_device = nvrhi::d3d11::createDevice(device_desc);
 
 #ifndef NDEBUG
-    LOG_INFO("enable nvrhi validation");
+    LOG_INFO("create nvrhi validation layer");
 
     nvrhi::DeviceHandle nvrhi_validation_layer = nvrhi::validation::createValidationLayer(nvrhi_device);
     nvrhi_device = nvrhi_validation_layer;

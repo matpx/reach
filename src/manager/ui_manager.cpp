@@ -23,6 +23,8 @@ UiManager::UiManager() {
         auto &nvrhi_device = DeviceManager::get().get_nvrhi_device();
         auto &framebuffer = DeviceManager::get().get_nvrhi_framebuffer();
 
+        LOG_INFO("init ui material pipeline");
+
         nvrhi::ShaderHandle vertex_shader = nvrhi_device->createShader(nvrhi::ShaderDesc(nvrhi::ShaderType::Vertex),
                                                                        g_immediate_main_vs_dxbc, sizeof(g_immediate_main_vs_dxbc));
 
@@ -81,7 +83,9 @@ void UiManager::submit_to_device() {
 
     const auto &world = World::current();
 
-    DeviceManager::get().draw_immediate(world.get<CameraComponent>(world.current_camera).ui_proj, immediate_data, immediate_material);
+    if (world.current_camera != entt::null) {
+        DeviceManager::get().draw_immediate(world.get<CameraComponent>(world.current_camera).ui_proj, immediate_data, immediate_material);
+    }
 
     immediate_data.resize(0);
 }

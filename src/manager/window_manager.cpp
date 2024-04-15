@@ -22,6 +22,8 @@ WindowManager &WindowManager::get() { return *self; }
 WindowManager::WindowManager(const glm::ivec2 width_height) : window_width_height(width_height) {
     PRECONDITION(self == nullptr);
 
+    LOG_INFO("init glfw");
+
     glfwSetErrorCallback(glfw_error_callback);
 
     const int32_t glfw_init_result = glfwInit();
@@ -33,6 +35,8 @@ WindowManager::WindowManager(const glm::ivec2 width_height) : window_width_heigh
     // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+    LOG_INFO("open glfw window");
 
     glfw_window = glfwCreateWindow(width_height.x, width_height.y, "Reach", NULL, NULL);
     POSTCONDITION(glfw_window != nullptr);
